@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    /// Talaqi
+                    //Talaqi
                     const Text(
                       'تلاق',
                       style: TextStyle(
@@ -83,7 +83,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     const SizedBox(height: 40),
 
-                    //the white card
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
@@ -140,7 +139,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           const SizedBox(height: 12),
 
-                          
                           Align(
                             alignment: Alignment.centerRight,
                             child: TextButton(
@@ -259,11 +257,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             if (state is ResetPasswordSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني"),
+                  content: Text(
+                    "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني",
+                  ),
                   backgroundColor: Colors.green,
                 ),
               );
-              //  Back after 2Sec
+              //Back after 2Sec
               Future.delayed(const Duration(seconds: 2), () {
                 Navigator.pop(context);
               });
@@ -281,7 +281,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    /// Talaqi
+                    //Talaqi
                     const Text(
                       'تلاق',
                       style: TextStyle(
@@ -299,7 +299,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
                     const SizedBox(height: 40),
 
-                    //the white card
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
@@ -315,14 +314,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       ),
                       child: Column(
                         children: [
-                          // نص توضيحي
                           const Text(
                             'أدخل بريدك الإلكتروني وسنرسل لك رابط لإعادة تعيين كلمة المرور',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
                           ),
 
                           const SizedBox(height: 20),
@@ -382,7 +377,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                         return;
                                       }
 
-                                      context.read<ResetPasswordCubit>().resetPassword(email);
+                                      context
+                                          .read<ResetPasswordCubit>()
+                                          .resetPassword(email);
                                     },
                                     child: const Text(
                                       "إرسال رابط إعادة التعيين",
@@ -407,8 +404,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 }
 
-
-/// Login Cubit
+//Login Cubit
 
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(LoginInitial());
@@ -428,7 +424,7 @@ class LoginCubit extends Cubit<LoginState> {
   }
 }
 
-/// Login States
+//Login States
 abstract class LoginState {}
 
 class LoginInitial extends LoginState {}
@@ -442,7 +438,7 @@ class LoginFailure extends LoginState {
   LoginFailure(this.message);
 }
 
-/// Reset Password Cubit
+//Reset Password Cubit
 
 class ResetPasswordCubit extends Cubit<ResetPasswordState> {
   ResetPasswordCubit() : super(ResetPasswordInitial());
@@ -455,19 +451,19 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
       emit(ResetPasswordSuccess());
     } on FirebaseAuthException catch (e) {
       String message = "حدث خطأ أثناء إرسال البريد الإلكتروني";
-      
+
       if (e.code == 'user-not-found') {
         message = "البريد الإلكتروني غير مسجل";
       } else if (e.code == 'invalid-email') {
         message = "البريد الإلكتروني غير صالح";
       }
-      
+
       emit(ResetPasswordFailure(message));
     }
   }
 }
 
-/// Reset Password States
+//Reset Password States
 abstract class ResetPasswordState {}
 
 class ResetPasswordInitial extends ResetPasswordState {}
