@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'firebase_options.dart';
+import 'LogIn+FprgetPass.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -212,6 +213,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ),
                                   ),
                                 ),
+                          const SizedBox(height: 16),
+                          
+                          //TextButton to navigate 
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider(
+                                    create: (_) => LoginCubit(),
+                                    child: const LoginScreen(),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              'لديك حساب؟ سجل',
+                              style: TextStyle(
+                                color: Color(0xFF2E4365),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
