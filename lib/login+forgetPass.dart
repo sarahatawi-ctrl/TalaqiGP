@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'firebase_options.dart';
+import 'SignUp.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -216,6 +217,28 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                 ),
+                          const SizedBox(height: 16),
+                          //TextButton to navigate to SignUp 
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider(
+                                    create: (_) => RegisterCubit(),
+                                    child: const RegisterScreen(),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              'ليس لديك حساب؟ انشئ الآن',
+                              style: TextStyle(
+                                color: Color(0xFF2E4365),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
