@@ -28,14 +28,56 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  
+  // list to store profile skills
   List<String> skills = ["تطوير الألعاب", "تصميم الواجهات"];
 
-  // add new skills
+  //  add a new empty skill field
   void addSkill() {
     setState(() {
       skills.add("");       
     });
+  }
+
+  //  display the success dialog upon saving
+  void showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Container(
+            padding: const EdgeInsets.all(30),
+            height: 280,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                
+                const Icon(
+                  Icons.check_circle_outline_rounded,
+                  size: 90,
+                  color: Color(0xFF344966),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'تم الحفظ بنجاح',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('موافق', style: TextStyle(fontSize: 18, color: Color(0xFF344966))),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -49,6 +91,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         elevation: 0,
         automaticallyImplyLeading: false, 
         actions: [
+          
           IconButton(
             icon: const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 22),
             onPressed: () => Navigator.pop(context),
@@ -61,7 +104,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           padding: const EdgeInsets.symmetric(horizontal: 25),
           child: Column(
             children: [
-              //  user`s image
+              // user profile image with camera edit icon
               Center(
                 child: Stack(
                   children: [
@@ -92,6 +135,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               const SizedBox(height: 30),
 
+              // profile data input fields
               buildEditField("الأسم", "سديم ناصر"),
               const SizedBox(height: 20),
               buildEditField("البريد الالكتروني", "sade-em@gmail.com"),
@@ -99,7 +143,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               buildEditField("نبذة:", "", isLongField: true),
               const SizedBox(height: 20),
 
-              //      skills secation
+              // skills section 
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -112,7 +156,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               const SizedBox(height: 10),
               
-               
+              
               Column(
                 children: skills.map((skill) => Padding(
                   padding: const EdgeInsets.only(bottom: 10),
@@ -121,6 +165,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               
               const SizedBox(height: 25),
+              
               
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -132,16 +177,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
               
               const SizedBox(height: 30),
 
-              // save button  
+              
               SizedBox(
                 width: 200,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('تم حفظ التغييرات بنجاح!'), backgroundColor: Colors.green),
-                    );
-                  },
+                  onPressed: showSuccessDialog,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryNavy,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -154,6 +195,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
         ),
       ),
+      //  navigation bar
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFF1A237E),
@@ -170,6 +212,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+ 
   Widget buildEditField(String label, String initialValue, {bool isLongField = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,6 +238,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+ 
   Widget buildSkillField(String skill) {
     return TextField(
       decoration: InputDecoration(
