@@ -20,8 +20,23 @@ class TalaaqApp extends StatelessWidget {
   }
 }
 
-class EditProfilePage extends StatelessWidget {
+class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
+
+  @override
+  State<EditProfilePage> createState() => _EditProfilePageState();
+}
+
+class _EditProfilePageState extends State<EditProfilePage> {
+  
+  List<String> skills = ["تطوير الألعاب", "تصميم الواجهات"];
+
+  // add new skills
+  void addSkill() {
+    setState(() {
+      skills.add("");       
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +48,6 @@ class EditProfilePage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: false, 
-        
         actions: [
           IconButton(
             icon: const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 22),
@@ -47,7 +61,7 @@ class EditProfilePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 25),
           child: Column(
             children: [
-              // user`s image
+              //  user`s image
               Center(
                 child: Stack(
                   children: [
@@ -85,18 +99,26 @@ class EditProfilePage extends StatelessWidget {
               buildEditField("نبذة:", "", isLongField: true),
               const SizedBox(height: 20),
 
+              //      skills secation
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text('المهارات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Icon(Icons.add_circle_outline, color: Colors.grey[600]),
+                  IconButton(
+                    icon: Icon(Icons.add_circle_outline, color: Colors.grey[600]),
+                    onPressed: addSkill,    
+                  ),
                 ],
               ),
               const SizedBox(height: 10),
               
-              buildSkillField("تطوير الألعاب"),
-              const SizedBox(height: 10),
-              buildSkillField("تصميم الواجهات"),
+               
+              Column(
+                children: skills.map((skill) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: buildSkillField(skill),
+                )).toList(),
+              ),
               
               const SizedBox(height: 25),
               
@@ -110,11 +132,16 @@ class EditProfilePage extends StatelessWidget {
               
               const SizedBox(height: 30),
 
+              // save button  
               SizedBox(
                 width: 200,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('تم حفظ التغييرات بنجاح!'), backgroundColor: Colors.green),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryNavy,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -127,7 +154,6 @@ class EditProfilePage extends StatelessWidget {
           ),
         ),
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFF1A237E),
@@ -169,17 +195,18 @@ class EditProfilePage extends StatelessWidget {
     );
   }
 
-  
   Widget buildSkillField(String skill) {
     return TextField(
-      readOnly: true,
       decoration: InputDecoration(
-        hintText: skill,
-        
+        hintText: skill.isEmpty ? "أدخل مهارة جديدة" : skill,
         suffixIcon: const Icon(Icons.edit_outlined, color: Colors.grey, size: 20),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: Color(0xFFEEEEEE)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFF344966)),
         ),
       ),
     );
