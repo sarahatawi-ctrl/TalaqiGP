@@ -20,9 +20,14 @@ class TalaaqApp extends StatelessWidget {
   }
 }
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     const Color primaryNavy = Color(0xFF344966);
@@ -32,12 +37,10 @@ class ProfilePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            //the top part with the navy blue curve and the user`s image
             Stack(
               alignment: Alignment.center,
               clipBehavior: Clip.none,
               children: [
-                //   navy blue curve
                 ClipPath(
                   clipper: HeaderClipper(),
                   child: Container(
@@ -54,13 +57,12 @@ class ProfilePage extends StatelessWidget {
                         ),
                         IconButton(
                           icon: const Icon(Icons.arrow_back_ios, color: Colors.red, size: 25),
-                          onPressed: () {},
+                          onPressed: () => Navigator.pop(context),
                         ),
                       ],
                     ),
                   ),
                 ),
-                //   user`s image
                 Positioned(
                   bottom: -50,
                   child: Container(
@@ -73,7 +75,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                     child: const CircleAvatar(
                       radius: 65,
-                      backgroundImage: NetworkImage('https://i.pravatar.cc/300?img=12'), //    test
+                      backgroundImage: NetworkImage('https://i.pravatar.cc/300?img=12'),
                     ),
                   ),
                 ),
@@ -82,14 +84,18 @@ class ProfilePage extends StatelessWidget {
             
             const SizedBox(height: 60),
 
-            //  user`s name and requset button
             const Text(
               'محمد أحمد',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: primaryNavy),
             ),
             const SizedBox(height: 15),
+            
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('تم إرسال الطلب')),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryNavy,
                 padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 12),
@@ -100,7 +106,6 @@ class ProfilePage extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-            //  skills
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Column(
@@ -108,16 +113,18 @@ class ProfilePage extends StatelessWidget {
                 children: [
                   const Text('نبذة', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-                  buildInfoBox(height: 100), // summary box 
+                  
+                  buildEditableBox(maxLines: 4),
                   
                   const SizedBox(height: 20),
                   const Text('المهارات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-                  buildInfoBox(height: 50),
+                 
+                  buildEditableBox(),
                   const SizedBox(height: 10),
-                  buildInfoBox(height: 50),
+                  buildEditableBox(),
                   const SizedBox(height: 10),
-                  buildInfoBox(height: 50),
+                  buildEditableBox(),
                 ],
               ),
             ),
@@ -125,8 +132,6 @@ class ProfilePage extends StatelessWidget {
           ],
         ),
       ),
-
-      // bar
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFF1A237E),
@@ -143,21 +148,25 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // skils and summary
-  Widget buildInfoBox({required double height}) {
+  
+  Widget buildEditableBox({int maxLines = 1}) {
     return Container(
-      width: double.infinity,
-      height: height,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: const Color(0xFFD1B7B7)),
       ),
+      child: TextField(
+        maxLines: maxLines,
+        decoration: const InputDecoration(
+          contentPadding: EdgeInsets.all(15),
+          border: InputBorder.none, 
+        ),
+      ),
     );
   }
 }
 
-// drwa the curve
 class HeaderClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
@@ -168,7 +177,6 @@ class HeaderClipper extends CustomClipper<Path> {
     path.close();
     return path;
   }
-
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
