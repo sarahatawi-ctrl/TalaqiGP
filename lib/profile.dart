@@ -28,6 +28,47 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  
+  // send requset window
+  void showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Container(
+            padding: const EdgeInsets.all(30),
+            height: 280,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.check_circle_outline_rounded,
+                  size: 90,
+                  color: Color(0xFF344966),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'تم الإرسال بنجاح',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('موافق', style: TextStyle(fontSize: 18, color: Color(0xFF344966))),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     const Color primaryNavy = Color(0xFF344966);
@@ -37,6 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // upper side with the curve   
             Stack(
               alignment: Alignment.center,
               clipBehavior: Clip.none,
@@ -56,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           onPressed: () {},
                         ),
                         IconButton(
-                          icon: const Icon(Icons.arrow_back_ios, color: Colors.red, size: 25),
+                          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 25),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ],
@@ -91,11 +133,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 15),
             
             ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('تم إرسال الطلب')),
-                );
-              },
+              onPressed: showSuccessDialog,
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryNavy,
                 padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 12),
@@ -113,18 +151,21 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   const Text('نبذة', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-                  
-                  buildEditableBox(maxLines: 4),
+                  //  summary 
+                  buildEditableBox(
+                    initialText: "مصمم مواقع مهتم بإنشاء واجهات مستخدم جذابة وسهلة الاستخدام مهتم بتحويل الأفكار المعقدة إلى تصاميم رقمية بسيطة ومبتكرة تخدم تجربة المستخدم.",
+                    maxLines: 4,
+                  ),
                   
                   const SizedBox(height: 20),
                   const Text('المهارات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-                 
-                  buildEditableBox(),
+                  //   skils
+                  buildEditableBox(initialText: "تصميم واجهات المستخدم (UI/UX)"),
                   const SizedBox(height: 10),
-                  buildEditableBox(),
+                  buildEditableBox(initialText: "تطوير الويب (HTML/CSS)"),
                   const SizedBox(height: 10),
-                  buildEditableBox(),
+                  buildEditableBox(initialText: "إدارة المشاريع البرمجية"),
                 ],
               ),
             ),
@@ -148,8 +189,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  
-  Widget buildEditableBox({int maxLines = 1}) {
+   
+  Widget buildEditableBox({String? initialText, int maxLines = 1}) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -157,6 +198,7 @@ class _ProfilePageState extends State<ProfilePage> {
         border: Border.all(color: const Color(0xFFD1B7B7)),
       ),
       child: TextField(
+        controller: TextEditingController(text: initialText),  
         maxLines: maxLines,
         decoration: const InputDecoration(
           contentPadding: EdgeInsets.all(15),
