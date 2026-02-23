@@ -31,7 +31,7 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   // Mohammed Ahmed's full data
   final TextEditingController _nameController = TextEditingController(text: "محمد أحمد");
-  final TextEditingController _emailController = TextEditingController(text: "mohamed.ahmed@email.com");
+  final TextEditingController _emailController = TextEditingController(text: "mohamed.ahmed@gmail.com");
   final TextEditingController _bioController = TextEditingController(
     text: "مصمم مواقع مهتم بإنشاء واجهات مستخدم جذابة وسهلة الاستخدام مهتم بتحويل الأفكار المعقدة إلى تصاميم رقمية بسيطة ومبتكرة تخدم تجربة المستخدم."
   );
