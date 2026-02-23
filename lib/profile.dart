@@ -29,7 +29,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   
-  // send requset window
+  //   display the success dialog with a checkmark
   void showSuccessDialog() {
     showDialog(
       context: context,
@@ -42,6 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // Success checkmark icon
                 const Icon(
                   Icons.check_circle_outline_rounded,
                   size: 90,
@@ -57,6 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(height: 20),
+                // Dismiss button
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text('موافق', style: TextStyle(fontSize: 18, color: Color(0xFF344966))),
@@ -78,7 +80,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // upper side with the curve   
+            // top section with custom curve and user avatar
             Stack(
               alignment: Alignment.center,
               clipBehavior: Clip.none,
@@ -90,13 +92,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     color: primaryNavy,
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        IconButton(
-                          icon: const Icon(Icons.list, color: Colors.white, size: 30),
-                          onPressed: () {},
-                        ),
+                        // header back button
                         IconButton(
                           icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 25),
                           onPressed: () => Navigator.pop(context),
@@ -117,7 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     child: const CircleAvatar(
                       radius: 65,
-                      backgroundImage: NetworkImage('https://i.pravatar.cc/300?img=12'),
+                      backgroundImage: NetworkImage('https://i.pravatar.cc/300?img=12'),//test
                     ),
                   ),
                 ),
@@ -126,12 +125,14 @@ class _ProfilePageState extends State<ProfilePage> {
             
             const SizedBox(height: 60),
 
+            // Profile name
             const Text(
               'محمد أحمد',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: primaryNavy),
             ),
             const SizedBox(height: 15),
             
+            //  button to send request
             ElevatedButton(
               onPressed: showSuccessDialog,
               style: ElevatedButton.styleFrom(
@@ -144,6 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             const SizedBox(height: 30),
 
+            // static information boxes
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Column(
@@ -151,21 +153,19 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   const Text('نبذة', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-                  //  summary 
-                  buildEditableBox(
-                    initialText: "مصمم مواقع مهتم بإنشاء واجهات مستخدم جذابة وسهلة الاستخدام مهتم بتحويل الأفكار المعقدة إلى تصاميم رقمية بسيطة ومبتكرة تخدم تجربة المستخدم.",
-                    maxLines: 4,
+                  buildStaticBox(
+                    text: "مصمم مواقع مهتم بإنشاء واجهات مستخدم جذابة وسهلة الاستخدام مهتم بتحويل الأفكار المعقدة إلى تصاميم رقمية بسيطة ومبتكرة تخدم تجربة المستخدم.",
+                    isLongText: true,
                   ),
                   
                   const SizedBox(height: 20),
                   const Text('المهارات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-                  //   skils
-                  buildEditableBox(initialText: "تصميم واجهات المستخدم (UI/UX)"),
+                  buildStaticBox(text: "تصميم واجهات المستخدم (UI/UX)"),
                   const SizedBox(height: 10),
-                  buildEditableBox(initialText: "تطوير الويب (HTML/CSS)"),
+                  buildStaticBox(text: "تطوير الويب (HTML/CSS)"),
                   const SizedBox(height: 10),
-                  buildEditableBox(initialText: "إدارة المشاريع البرمجية"),
+                  buildStaticBox(text: "إدارة المشاريع البرمجية"),
                 ],
               ),
             ),
@@ -173,6 +173,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ),
+      // navigation Bar
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFF1A237E),
@@ -181,7 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الاعدادات'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'الملف الشخصي'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'البحث'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'الدردشة'),
           BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'الرئيسية'),
         ],
@@ -189,25 +190,24 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-   
-  Widget buildEditableBox({String? initialText, int maxLines = 1}) {
+  
+  Widget buildStaticBox({required String text, bool isLongText = false}) {
     return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: const Color(0xFFD1B7B7)),
+        border: Border.all(color: const Color(0xFFEEEEEE), width: 1.5),
       ),
-      child: TextField(
-        controller: TextEditingController(text: initialText),  
-        maxLines: maxLines,
-        decoration: const InputDecoration(
-          contentPadding: EdgeInsets.all(15),
-          border: InputBorder.none, 
-        ),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 16, color: Colors.black87, height: 1.4),
       ),
     );
   }
 }
+
 
 class HeaderClipper extends CustomClipper<Path> {
   @override
