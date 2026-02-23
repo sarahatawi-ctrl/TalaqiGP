@@ -31,7 +31,7 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   // Mohammed Ahmed's full data
   final TextEditingController _nameController = TextEditingController(text: "محمد أحمد");
-  final TextEditingController _emailController = TextEditingController(text: "mohamed.ahmed@gmail.com");
+  final TextEditingController _emailController = TextEditingController(text: "mohamed.ahmed@email.com");
   final TextEditingController _bioController = TextEditingController(
     text: "مصمم مواقع مهتم بإنشاء واجهات مستخدم جذابة وسهلة الاستخدام مهتم بتحويل الأفكار المعقدة إلى تصاميم رقمية بسيطة ومبتكرة تخدم تجربة المستخدم."
   );
@@ -146,8 +146,25 @@ class _EditProfilePageState extends State<EditProfilePage> {
             // skill fields with logic for placeholders
             ...skills.map((skill) => buildInteractiveField(null, TextEditingController(text: skill), isSkill: true, initialValue: skill)).toList(),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 25),
             
+            // 
+            InkWell(
+              onTap: () {
+                debugPrint("عرض الأوسمة pressed");
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: const [
+                  Text('عرض الأوسمة ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Icon(Icons.arrow_back_ios, size: 18, color: Colors.black),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 40),
+            
+            // save button
             SizedBox(
               width: 200,
               height: 50,
@@ -170,7 +187,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         unselectedItemColor: Colors.grey,
         currentIndex: 1,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الاعدادات'),
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'الاعدادات'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'الملف الشخصي'),
           BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'الدردشة'),
           BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
