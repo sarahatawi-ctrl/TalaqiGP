@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main() {
   runApp(const TalaaqApp());
@@ -28,17 +29,31 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  // list to store profile skills
-  List<String> skills = ["تطوير الألعاب", "تصميم الواجهات"];
+  //  profile data
+  final TextEditingController _nameController = TextEditingController(text: "سديم ناصر");
+  final TextEditingController _emailController = TextEditingController(text: "sade-em@gmail.com");
+  final TextEditingController _bioController = TextEditingController(text: "");
 
-  //  add a new empty skill field
+  // skills list
+  List<String> skills = ["تطوير الألعاب", "تصميم الواجهات"];
+  final ImagePicker _picker = ImagePicker();
+
+  //  image from gallery
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      print("Image selected: ${image.path}");
+    }
+  }
+
+  // add a new empty skill to the list
   void addSkill() {
     setState(() {
-      skills.add("");       
+      skills.add("");
     });
   }
 
-  //  display the success dialog upon saving
+  // success message dialog
   void showSuccessDialog() {
     showDialog(
       context: context,
@@ -51,23 +66,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                
-                const Icon(
-                  Icons.check_circle_outline_rounded,
-                  size: 90,
-                  color: Color(0xFF344966),
-                ),
+                const Icon(Icons.check_circle_outline_rounded, size: 90, color: Color(0xFF344966)),
                 const SizedBox(height: 20),
-                const Text(
-                  'تم الحفظ بنجاح',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
+                const Text('تم الحفظ بنجاح', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
-                
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text('موافق', style: TextStyle(fontSize: 18, color: Color(0xFF344966))),
@@ -89,9 +91,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        automaticallyImplyLeading: false, 
+        automaticallyImplyLeading: false,
         actions: [
-          
           IconButton(
             icon: const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 22),
             onPressed: () => Navigator.pop(context),
@@ -104,7 +105,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           padding: const EdgeInsets.symmetric(horizontal: 25),
           child: Column(
             children: [
-              // user profile image with camera edit icon
+              // avatar section
               Center(
                 child: Stack(
                   children: [
@@ -115,58 +116,55 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                       child: const CircleAvatar(
                         radius: 70,
-                        backgroundImage: NetworkImage('https://i.pravatar.cc/300?img=5'), 
+                        backgroundImage: NetworkImage('https://i.pravatar.cc/300?img=5'),
                       ),
                     ),
                     Positioned(
                       bottom: 0,
                       right: 5,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF6D6D9E),
-                          shape: BoxShape.circle,
+                      child: GestureDetector(
+                        onTap: _pickImage,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(color: Color(0xFF6D6D9E), shape: BoxShape.circle),
+                          child: const Icon(Icons.camera_alt_outlined, color: Colors.white, size: 20),
                         ),
-                        child: const Icon(Icons.camera_alt_outlined, color: Colors.white, size: 20),
                       ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 30),
+              
+              buildEditField("الأسم", _nameController),
+              const SizedBox(height: 20),
+              buildEditField("البريد الالكتروني", _emailController),
+              const SizedBox(height: 20),
+              buildEditField("نبذة:", _bioController, isLongField: true),
+              const SizedBox(height: 20),
 
-              // profile data input fields
-              buildEditField("الأسم", "سديم ناصر"),
-              const SizedBox(height: 20),
-              buildEditField("البريد الالكتروني", "sade-em@gmail.com"),
-              const SizedBox(height: 20),
-              buildEditField("نبذة:", "", isLongField: true),
-              const SizedBox(height: 20),
-
-              // skills section 
+              
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text('المهارات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   IconButton(
-                    icon: Icon(Icons.add_circle_outline, color: Colors.grey[600]),
-                    onPressed: addSkill,    
+                    icon: const Icon(Icons.add_circle_outline, color: Colors.black87, size: 26),
+                    onPressed: addSkill,
                   ),
                 ],
               ),
               const SizedBox(height: 10),
-              
-              
+
+              // dynamic skills List
               Column(
                 children: skills.map((skill) => Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: buildSkillField(skill),
                 )).toList(),
               ),
-              
+
               const SizedBox(height: 25),
-              
-              
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: const [
@@ -174,10 +172,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   Icon(Icons.arrow_back_ios, size: 18, color: Colors.black),
                 ],
               ),
-              
               const SizedBox(height: 30),
-
-              
+              // save button
               SizedBox(
                 width: 200,
                 height: 50,
@@ -195,7 +191,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
         ),
       ),
-      //  navigation bar
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFF1A237E),
@@ -204,7 +199,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الاعدادات'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'الملف الشخصي'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'البحث'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'الدردشة'),
           BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'الرئيسية'),
         ],
@@ -212,18 +207,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
- 
-  Widget buildEditField(String label, String initialValue, {bool isLongField = false}) {
+  // build Name/Email/Bio fields 
+  Widget buildEditField(String label, TextEditingController controller, {bool isLongField = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         TextField(
+          controller: controller,
           maxLines: isLongField ? 4 : 1,
+          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
           decoration: InputDecoration(
-            hintText: initialValue,
-            hintStyle: const TextStyle(color: Colors.grey),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: const BorderSide(color: Color(0xFFEEEEEE)),
@@ -238,21 +233,40 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
- 
+  //   skill fields with placeholder 
   Widget buildSkillField(String skill) {
-    return TextField(
-      decoration: InputDecoration(
-        hintText: skill.isEmpty ? "أدخل مهارة جديدة" : skill,
-        suffixIcon: const Icon(Icons.edit_outlined, color: Colors.grey, size: 20),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Color(0xFFEEEEEE)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Color(0xFF344966)),
-        ),
-      ),
+    bool isNewSkill = skill.isEmpty;
+    bool isReadOnly = !isNewSkill; 
+    
+    return StatefulBuilder(
+      builder: (context, setInternalState) {
+        return TextField(
+          readOnly: isReadOnly,
+          controller: isNewSkill ? null : TextEditingController(text: skill),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+          decoration: InputDecoration(
+            // placeholder shown only if the skill is new and empty
+            hintText: isNewSkill ? "أدخل مهارة جديدة" : null,
+            hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.normal),
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.edit_outlined, color: Colors.black87, size: 20),
+              onPressed: () {
+                setInternalState(() {
+                  isReadOnly = !isReadOnly;
+                });
+              },
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Color(0xFFEEEEEE)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Color(0xFF344966)),
+            ),
+          ),
+        );
+      }
     );
   }
 }
