@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'firebase_options.dart';
-import 'LogIn+FprgetPass.dart'; 
+import 'login_forget_pass.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -267,8 +267,9 @@ class RegisterCubit extends Cubit<RegisterState> {
       );
     } on FirebaseAuthException catch (e) {
       String msg = "تأكد من البريد الإلكتروني وكلمة المرور";
-      if (e.code == 'email-already-in-use')
+      if (e.code == 'email-already-in-use') {
         msg = "هذا البريد الإلكتروني مستخدم مسبقاً";
+      }
       if (e.code == 'invalid-email') msg = "البريد الإلكتروني غير صالح";
       if (e.code == 'weak-password') msg = "كلمة المرور ضعيفة جداً";
       emit(RegisterFailure(msg));
