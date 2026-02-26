@@ -4,11 +4,10 @@ import 'dart:math' as math;
 class BadgesScreen extends StatelessWidget {
   const BadgesScreen({Key? key}) : super(key: key);
 
-  // Specific Colors requested by the user
-  static const Color colorTopBadges = Color(0xFFE94B28); // Vibrant Red-Orange
-  static const Color colorBottomBadges = Color(0xFF4A4A4A); // Dark Gray
-  static const Color colorPoliceBlue = Color(0xFF2E4365); // For text and icons
-  static const Color colorPearl = Color(0xFFEBDDC5);
+  static const Color colorTopBadges = Color(0xFFE94B28); 
+  static const Color colorBottomBadges = Color(0xFF4A4A4A); 
+  static const Color colorPoliceBlue = Color(0xFF2E4365); 
+  static const Color colorPearl = Color.fromARGB(255, 255, 255, 255);
 
   @override
   Widget build(BuildContext context) {
