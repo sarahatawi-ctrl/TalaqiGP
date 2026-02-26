@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
+import 'WelcomeScreen.dart'; 
 
-void main() {
-  runApp(const TalaaqApp());
-}
-
-class TalaaqApp extends StatefulWidget {
-  const TalaaqApp({super.key});
+class Setting extends StatefulWidget {
+  const Setting({super.key});
 
   @override
-  State<TalaaqApp> createState() => _TalaaqAppState();
+  State<Setting> createState() => _TalaaqAppState();
 }
 
-class _TalaaqAppState extends State<TalaaqApp> {
+class _TalaaqAppState extends State<Setting> {
   bool _isDark = false;
   bool _isLoggedIn = true; 
 
@@ -46,8 +43,7 @@ class _TalaaqAppState extends State<TalaaqApp> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        
-                        debugPrint("انتقال إلى صفحة تسجيل الدخول..."); 
+                        setState(() => _isLoggedIn = true);
                       },
                       child: const Text(" تسجيل الدخول"),
                     )
@@ -152,13 +148,6 @@ class SettingsPage extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         title: Text('الإعدادات', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontWeight: FontWeight.bold)),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.arrow_forward_ios, color: isDarkMode ? Colors.white : Colors.black, size: 22),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 10),
-        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -173,7 +162,14 @@ class SettingsPage extends StatelessWidget {
               child: Column(
                 children: [
                   buildSettingsItem(Icons.person_outline, 'الملف الشخصي', isDarkMode, () {}),
-                  buildSettingsItem(Icons.lightbulb_outline, 'مساعدك في التعلم', isDarkMode, () {}),
+                  
+                  buildSettingsItem(Icons.lightbulb_outline, 'مساعدك في التعلم', isDarkMode, () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+                    );
+                  }),
+                  
                   buildSettingsItem(Icons.notifications_none, 'جلسات التعلم', isDarkMode, () {}, isLast: true),
                 ],
               ),
@@ -203,19 +199,6 @@ class SettingsPage extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: isDarkMode ? Colors.white : const Color(0xFF1A237E),
-        unselectedItemColor: Colors.grey,
-        currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'الاعدادات'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'الملف الشخصي'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'الدردشة'),
-          BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'الرئيسية'),
-        ],
       ),
     );
   }
