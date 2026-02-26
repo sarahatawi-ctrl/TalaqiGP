@@ -1,29 +1,7 @@
 import 'package:flutter/material.dart';
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Leaderboard',
-      theme: ThemeData(
-         primaryColor: const Color(0xFF2E4365),
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: const LeaderboardPage(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
-class LeaderboardPage extends StatelessWidget {
-  const LeaderboardPage({super.key});
-
-  //volunteers
+import 'BadgesScreen.dart'; 
+class Leaderboard extends StatelessWidget {
+  const Leaderboard({super.key});
   final List<Map<String, dynamic>> volunteers = const [
     {
       'name': 'مهند', 
@@ -76,7 +54,7 @@ class LeaderboardPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: const Color(0xFFF0F2F5), 
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(120.0), 
+          preferredSize: const Size.fromHeight(150.0), 
           child: AppBar(
             automaticallyImplyLeading: false, 
             flexibleSpace: Container(
@@ -94,7 +72,6 @@ class LeaderboardPage extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -102,33 +79,60 @@ class LeaderboardPage extends StatelessWidget {
                           IconButton(
                             icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                             onPressed: () {
-                            
+                              Navigator.pop(context);
                             },
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF4D03F), 
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Text(
-                              'لوحة الصدارة',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const BadgesScreen()));
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2), 
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Colors.white.withOpacity(0.5), width: 1),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: const [
+                                  Icon(Icons.military_tech, color: Colors.white, size: 20),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'الأوسمة',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                          const SizedBox(width: 48), 
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'متطوعين الشهر:',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text(
+                              'لوحة الصدارة',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'متطوعين الشهر:',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -209,7 +213,6 @@ class LeaderboardCard extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
-            //Medal Icon
             Container(
               width: 40,
               height: 40,
@@ -224,13 +227,11 @@ class LeaderboardCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            //Profile Picture
             CircleAvatar(
               radius: 25,
               backgroundImage: NetworkImage(imageUrl),
             ),
             const SizedBox(width: 16),
-            //Name and Hours
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,7 +254,6 @@ class LeaderboardCard extends StatelessWidget {
                 ],
               ),
             ),
-            //Rank Number
             Container(
               width: 24,
               height: 24,
