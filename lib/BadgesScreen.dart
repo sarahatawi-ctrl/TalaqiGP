@@ -7,12 +7,11 @@ class BadgesScreen extends StatelessWidget {
   static const Color colorTopBadges = Color(0xFFE94B28); 
   static const Color colorBottomBadges = Color(0xFF4A4A4A); 
   static const Color colorPoliceBlue = Color(0xFF2E4365); 
-  static const Color colorPearl = Color.fromARGB(255, 255, 255, 255);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: colorPearl.withOpacity(0.2),
+      backgroundColor: Colors.white, 
       body: Stack(
         children: [
           const ConfettiBackground(count: 60),
@@ -28,7 +27,7 @@ class BadgesScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.arrow_back_ios, color: colorPoliceBlue, size: 28),
+                        icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 28),
                         onPressed: () => Navigator.pop(context),
                       ),
                       const Text(
@@ -36,7 +35,7 @@ class BadgesScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: colorPoliceBlue,
+                          color: Colors.black,
                         ),
                       ),
                     ],
@@ -52,7 +51,7 @@ class BadgesScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 40),
-                                    Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const SizedBox(width: 15),
@@ -192,9 +191,9 @@ class ConfettiBackground extends StatelessWidget {
       children: List.generate(count, (index) {
         final color = [
           const Color(0xFFFF4500),
-          const Color(0xFF4A4A4A),
-          const Color(0xFF2E4365),
-          const Color.fromARGB(255, 255, 255, 255),
+          const Color(0xFFB0BEC5), 
+          const Color(0xFF90CAF9), 
+          Colors.orange,
         ][random.nextInt(4)];
         
         return Positioned(
@@ -206,7 +205,7 @@ class ConfettiBackground extends StatelessWidget {
               width: random.nextDouble() * 7 + 3,
               height: random.nextDouble() * 7 + 3,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.12),
+                color: color.withOpacity(0.2),
                 shape: random.nextBool() ? BoxShape.circle : BoxShape.rectangle,
               ),
             ),
