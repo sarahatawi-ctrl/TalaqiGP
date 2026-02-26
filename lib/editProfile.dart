@@ -128,7 +128,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             const SizedBox(height: 20),
             buildInteractiveField("البريد الالكتروني", _emailController),
             const SizedBox(height: 20),
-            buildInteractiveField("نبذة:", _bioController, isLongField: true),
+            buildInteractiveField("نبذة", _bioController, isLongField: true),
             const SizedBox(height: 20),
 
             Row(
