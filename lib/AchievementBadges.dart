@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:share_plus/share_plus.dart'; 
+import 'package:share_plus/share_plus.dart';
 
 class AchievementBadges extends StatelessWidget {
   const AchievementBadges({super.key});
@@ -65,8 +65,8 @@ class AchievementBadges extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             Share.share(
-                              '🎉 لقد حصلت على وسام جديد في التطبيق لإكمالي 5 ساعات من التركيز! #إنجاز',
-                              subject: 'إنجاز جديد!',  
+                              '🎉 لقد حصلت على وسام جديد في التطبيق لإكمالي 5 ساعات من التطوع! #إنجاز',
+                              subject: 'إنجاز جديد!',
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -112,7 +112,7 @@ class BadgeWidget extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withAlpha(38), 
             blurRadius: 40,
             offset: const Offset(0, 20),
           ),
@@ -139,7 +139,7 @@ class BadgeWidget extends StatelessWidget {
                 ],
               ),
               border: Border.all(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withAlpha(77), 
                 width: 2,
               ),
             ),
@@ -209,7 +209,7 @@ class SunburstPainter extends CustomPainter {
     canvas.drawPath(path, paint);
 
     final Paint highlightPaint = Paint()
-      ..color = Colors.white.withOpacity(0.2)
+      ..color = Colors.white.withAlpha(51)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     canvas.drawPath(path, highlightPaint);
@@ -243,7 +243,7 @@ class ConfettiBackground extends StatelessWidget {
               width: random.nextDouble() * 8 + 4,
               height: random.nextDouble() * 8 + 4,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.6),
+                color: color.withAlpha(153), 
                 shape: random.nextBool() ? BoxShape.circle : BoxShape.rectangle,
               ),
             ),
