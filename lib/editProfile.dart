@@ -29,14 +29,14 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  // Mohammed Ahmed's full data
+  
   final TextEditingController _nameController = TextEditingController(text: "محمد أحمد");
   final TextEditingController _emailController = TextEditingController(text: "mohamed.ahmed@gmail.com");
   final TextEditingController _bioController = TextEditingController(
     text: "مصمم مواقع مهتم بإنشاء واجهات مستخدم جذابة وسهلة الاستخدام مهتم بتحويل الأفكار المعقدة إلى تصاميم رقمية بسيطة ومبتكرة تخدم تجربة المستخدم."
   );
 
-  // Initial skills list
+  //Initial skills list
   List<String> skills = [
     "تصميم واجهات المستخدم (UI/UX)",
     "تطوير الويب (HTML/CSS)",
@@ -54,7 +54,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   void addSkill() {
     setState(() {
-      skills.add(""); // Adds empty string to trigger placeholder
+      skills.add(""); 
     });
   }
 
@@ -83,13 +83,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor:Color(0xFF2E4365),
         elevation: 0,
-        title: const Text('تعديل الملف الشخصي', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        title: const Text('تعديل الملف الشخصي', selectionColor: primaryNavy, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 22),
+            icon: const Icon(Icons.arrow_forward_ios, size: 22,color: Colors.white),
             onPressed: () => Navigator.pop(context),
           ),
           const SizedBox(width: 10),
@@ -114,8 +114,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       onTap: _pickImage,
                       child: Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(color: Color(0xFF6D6D9E), shape: BoxShape.circle),
-                        child: const Icon(Icons.camera_alt_outlined, color: Colors.white, size: 20),
+                        decoration: const BoxDecoration(color: Color(0xFF2E4365), shape: BoxShape.circle),
+                        child: const Icon(Icons.camera_alt_outlined, color:Color.fromARGB(255, 183, 200, 228), size: 20),
                       ),
                     ),
                   ),
