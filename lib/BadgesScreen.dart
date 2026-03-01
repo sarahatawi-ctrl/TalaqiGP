@@ -1,133 +1,181 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+
+      home: BadgesScreen(),
+    );
+  }
+}
 
 class BadgesScreen extends StatelessWidget {
   const BadgesScreen({Key? key}) : super(key: key);
 
-  static const Color colorTopBadges = Color(0xFFE94B28); 
-  static const Color colorBottomBadges = Color(0xFF4A4A4A); 
-  static const Color colorPoliceBlue = Color(0xFF2E4365); 
+  static const Color primaryColor = Color(0xFF4A6FA5);
+  static const Color accentColor = Color(0xFFD9534F);
+  static const Color backgroundColor = Color(0xFFF0F2F5);
+  static const Color textColor = Color(0xFF333333);
+  static const Color lockedColor = Color(0xFFB0BCC5);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, 
-      body: Stack(
-        children: [
-          const ConfettiBackground(count: 60),
-          
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: backgroundColor,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 10.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 28),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      const Text(
-                        'الأوسمة',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
+                  IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: textColor,
+                      size: 24,
+                    ),
+                    onPressed: () => Navigator.pop(context),
                   ),
-                  const SizedBox(height: 40),
-                  
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildSunburstBadge('5', 'ساعات', colorTopBadges),
-                      _buildSunburstBadge('10', 'ساعات', colorTopBadges),
-                      _buildSunburstBadge('15', 'ساعة', colorTopBadges),
-                    ],
+                  const Text(
+                    'الأوسمة',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
                   ),
-                  const SizedBox(height: 40),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const SizedBox(width: 15),
-                      _buildSunburstBadge('20', 'ساعة', colorBottomBadges),
-                      const SizedBox(width: 35),
-                      _buildSunburstBadge('25', 'ساعة', colorBottomBadges),
-                    ],
-                  ),
+                  const SizedBox(width: 48), 
                 ],
               ),
             ),
-          ),
-        ],
+            
+            Expanded(
+              child: GridView.count(
+                
+                crossAxisCount: 3,
+                padding: const EdgeInsets.all(16),
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 0.65, 
+                children: [
+                  _buildProfessionalBadge('5', 'ساعات', true),
+                  _buildProfessionalBadge('10', 'ساعات', true),
+                  _buildProfessionalBadge('25', 'ساعة', true),
+                  _buildProfessionalBadge('50', 'ساعة', false),
+                  _buildProfessionalBadge('100', 'ساعة', false),
+                  _buildProfessionalBadge('200', 'ساعة', false),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSunburstBadge(String number, String label, Color baseColor) {
+  Widget _buildProfessionalBadge(String hours, String label, bool isUnlocked) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 100,
-          height: 100,
+          width: 130,
+          height: 160,
           child: Stack(
-            alignment: Alignment.center,
+            alignment: Alignment.topCenter,
             children: [
-              CustomPaint(
-                size: const Size(100, 100),
-                painter: SunburstPainter(color: baseColor),
-              ),
-              Container(
-                width: 75,
-                height: 75,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: baseColor,
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
-                    width: 2,
+              Positioned(
+                top: 0,
+                child: CustomPaint(
+                  size: const Size(60, 60),
+                  painter: ProfessionalRibbonPainter(
+                    color: isUnlocked
+                        ? BadgesScreen.accentColor
+                        : BadgesScreen.lockedColor,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 12,
-                      offset: const Offset(0, 6),
-                    ),
-                    BoxShadow(
-                      color: baseColor.withOpacity(0.2),
-                      blurRadius: 6,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
                 ),
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      number,
-                      style: const TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        height: 1.0,
-                      ),
+              ),
+              Positioned(
+                top: 20,
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: isUnlocked
+                          ? [const Color(0xFF5A82B4), const Color(0xFF4A6FA5)]
+                          : [const Color(0xFFC8D0D8), const Color(0xFFB0BCC5)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                    Text(
-                      label,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    border: Border.all(
+                      color: isUnlocked
+                          ? const Color(0xFF7E9DCA)
+                          : const Color(0xFFD4DDE3),
+                      width: 2,
                     ),
-                  ],
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Container(
+                      width: 88,
+                      height: 88,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                          width: 2,
+                        ),
+                      ),
+                      child: isUnlocked
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  hours,
+                                  style: const TextStyle(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    height: 1.1,
+                                  ),
+                                ),
+                                Text(
+                                  label,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white.withOpacity(0.9),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Icon(
+                              Icons.lock_outline,
+                              color: Colors.white.withOpacity(0.8),
+                              size: 40,
+                            ),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -138,80 +186,35 @@ class BadgesScreen extends StatelessWidget {
   }
 }
 
-class SunburstPainter extends CustomPainter {
+class ProfessionalRibbonPainter extends CustomPainter {
   final Color color;
-  SunburstPainter({required this.color});
+  ProfessionalRibbonPainter({required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..color = color.withOpacity(0.7)
-      ..style = PaintingStyle.fill;
+    final paint = Paint()..color = color;
+    final shadowPaint = Paint()..color = Colors.black.withOpacity(0.2);
 
-    final double centerX = size.width / 2;
-    final double centerY = size.height / 2;
-    final double outerRadius = size.width / 2;
-    final double innerRadius = outerRadius * 0.85;
-    const int points = 12;
+    final path = Path();
+    double w = size.width;
+    double h = size.height;
 
-    final Path path = Path();
-    for (int i = 0; i < points * 2; i++) {
-      final double radius = i.isEven ? outerRadius : innerRadius;
-      final double angle = (i * math.pi) / points - (math.pi / 2);
-      final double x = centerX + radius * math.cos(angle);
-      final double y = centerY + radius * math.sin(angle);
-      if (i == 0) {
-        path.moveTo(x, y);
-      } else {
-        path.lineTo(x, y);
-      }
-    }
+    path.moveTo(w * 0.1, 0);
+    path.lineTo(w * 0.5, h * 0.3);
+    path.lineTo(w * 0.5, h);
+    path.lineTo(0, h * 0.7);
     path.close();
+
+    path.moveTo(w * 0.9, 0);
+    path.lineTo(w * 0.5, h * 0.3);
+    path.lineTo(w * 0.5, h);
+    path.lineTo(w, h * 0.7);
+    path.close();
+
+    canvas.drawPath(path.shift(const Offset(0, 2)), shadowPaint);
     canvas.drawPath(path, paint);
-    
-    final Paint strokePaint = Paint()
-      ..color = Colors.white.withOpacity(0.2)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-    canvas.drawPath(path, strokePaint);
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class ConfettiBackground extends StatelessWidget {
-  final int count;
-  const ConfettiBackground({super.key, this.count = 30});
-
-  @override
-  Widget build(BuildContext context) {
-    final random = math.Random(42);
-    return Stack(
-      children: List.generate(count, (index) {
-        final color = [
-          const Color(0xFFFF4500),
-          const Color(0xFFB0BEC5), 
-          const Color(0xFF90CAF9), 
-          Colors.orange,
-        ][random.nextInt(4)];
-        
-        return Positioned(
-          left: random.nextDouble() * MediaQuery.of(context).size.width,
-          top: random.nextDouble() * MediaQuery.of(context).size.height,
-          child: Transform.rotate(
-            angle: random.nextDouble() * 2 * math.pi,
-            child: Container(
-              width: random.nextDouble() * 7 + 3,
-              height: random.nextDouble() * 7 + 3,
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
-                shape: random.nextBool() ? BoxShape.circle : BoxShape.rectangle,
-              ),
-            ),
-          ),
-        );
-      }),
-    );
-  }
 }
