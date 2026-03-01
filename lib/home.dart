@@ -24,8 +24,55 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final List<Map<String, String>> _allItems = [
+    {'title': 'تصميم الواجهات', 'name': 'محمد أحمد', 'image': 'assets/user1.png'},
+    {'title': 'البرمجة', 'name': 'شذا محمد', 'image': 'assets/user2.png'},
+    {'title': 'اللغة الانجليزية', 'name': 'مهند فيصل', 'image': 'assets/user3.png'},
+    {'title': 'الكروشيه', 'name': 'نورة محمد', 'image': 'assets/user4.png'},
+    {'title': 'المواقع الالكترونية', 'name': 'أحمد عبدالحميد', 'image': 'assets/user5.png'},
+  ];
+
+  List<Map<String, String>> _displayedItems = [];
+
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _displayedItems = List.from(_allItems);
+
+    _searchController.addListener(_filterItems);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_filterItems);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _filterItems() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        _displayedItems = List.from(_allItems);
+      } else {
+        _displayedItems = _allItems.where((item) {
+          final title = item['title']!.toLowerCase();
+          final name = item['name']!.toLowerCase();
+          return title.contains(query) || name.contains(query);
+        }).toList();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +82,6 @@ class HomePage extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
@@ -49,41 +95,34 @@ class HomePage extends StatelessWidget {
                     )
                   ],
                 ),
-                child: const TextField(
+                child: TextField(
+                  controller: _searchController,
                   textAlign: TextAlign.right,
-                  decoration: InputDecoration(
-                    hintText: 'بحث',
+                  decoration: const InputDecoration(
+                    hintText: 'بحث في المهارات أو الأشخاص...',
                     prefixIcon: Icon(Icons.search, color: Colors.grey),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 15),
+                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
                   ),
                 ),
               ),
             ),
-            
             const SizedBox(height: 15),
-
             _buildCategories(),
-
             const SizedBox(height: 15),
-
             Expanded(
-              child: ListView(
+              child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                children: [
-                  _buildCard('تصميم الواجهات', 'محمد أحمد','assets/user1.png' ),
-                  _buildCard('البرمجة', 'شذا محمد', 'assets/user2.png'),
-                  _buildCard('اللغة الانجليزية', 'مهند فيصل', 'assets/user3.png'),
-                  _buildCard('الكروشيه', 'نورة محمد', 'assets/user4.png'),
-                  _buildCard('المواقع الالكترونية', 'أحمد عبدالحميد', 'assets/user5.png'),
-                ],
+                itemCount: _displayedItems.length,
+                itemBuilder: (context, index) {
+                  final item = _displayedItems[index];
+                  return _buildCard(item['title']!, item['name']!, item['image']!);
+                },
               ),
             ),
           ],
         ),
       ),
-
-      // 4. شريط التنقل السفلي
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFF1A237E),
@@ -120,7 +159,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  
   Widget _buildCard(String title, String name, String imagePath) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -131,16 +169,12 @@ class HomePage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          
           CircleAvatar(
             radius: 30,
             backgroundColor: Colors.transparent,
-            backgroundImage: AssetImage(imagePath), 
+            backgroundImage: AssetImage(imagePath),
           ),
-          
           const SizedBox(width: 15),
-
-      
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
