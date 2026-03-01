@@ -148,19 +148,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
             const SizedBox(height: 25),
             
-            // 
-            InkWell(
-              onTap: () {
-                debugPrint("عرض الأوسمة pressed");
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
-                  Text('عرض الأوسمة ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Icon(Icons.arrow_back_ios, size: 18, color: Colors.black),
-                ],
-              ),
-            ),
             
             const SizedBox(height: 40),
             
