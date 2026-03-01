@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'WelcomeScreen.dart'; 
 
+
 class Setting extends StatefulWidget {
   const Setting({super.key});
 
@@ -92,7 +93,7 @@ class SettingsPage extends StatelessWidget {
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('إغلاق')),
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('إغلاق',style: TextStyle(color: Color(0xFF2E4365)),)),
           ],
         );
       },
@@ -123,7 +124,7 @@ class SettingsPage extends StatelessWidget {
           title: const Text('تسجيل الخروج'),
           content: const Text('هل أنت متأكد أنك تريد مغادرة التطبيق الآن؟'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء',style: TextStyle(color: Color(0xFF2E4365)),)),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
