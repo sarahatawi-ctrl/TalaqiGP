@@ -28,3 +28,12 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+    assets:
+    - assets/greenProfileIcon.png
+    - assets/redProfileIcon.png
+    - assets/user1.png
+    - assets/user2.png
+    - assets/user3.png
+    - assets/user4.png
+    - assets/user5.png
