@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'chatMain.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -131,7 +131,7 @@ class _HomePageState extends State<HomePage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الاعدادات'),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'الملف الشخصي'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'البحث'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'الدردشة'),
           BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
         ],
