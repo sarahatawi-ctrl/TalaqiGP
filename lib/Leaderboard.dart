@@ -1,33 +1,15 @@
 import 'package:flutter/material.dart';
 import 'BadgesScreen.dart';
 
-void main() {
-runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-const MyApp({super.key});
-
-@override
-Widget build(BuildContext context) {
-  return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-
-      home: Leaderboard(),
-
-    );
-}
-}
-
 class Leaderboard extends StatelessWidget {
   const Leaderboard({super.key});
   final List<Map<String, dynamic>> volunteers = const [
-    {'name': 'مهند', 'hours': 60, 'rank': 1, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704d', 'medal': 'gold'},
-    {'name': 'سديم', 'hours': 56, 'rank': 2, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704e', 'medal': 'silver'},
-    {'name': 'نورة', 'hours': 48, 'rank': 3, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704f', 'medal': 'bronze'},
+    {'name': 'نورة', 'hours': 60, 'rank': 1, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704d', 'medal': 'gold'},
+    {'name': 'مهند', 'hours': 56, 'rank': 2, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704e', 'medal': 'silver'},
+    {'name': 'رنا', 'hours': 48, 'rank': 3, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704f', 'medal': 'bronze'},
     {'name': 'مشعل', 'hours': 36, 'rank': 4, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704a', 'medal': 'none'},
-    {'name': 'محمد', 'hours': 36, 'rank': 5, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704b', 'medal': 'none'},
-    {'name': 'شذا', 'hours': 30, 'rank': 6, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704c', 'medal': 'none'},
+    {'name': 'شذا', 'hours': 36, 'rank': 5, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704b', 'medal': 'none'},
+    {'name': 'محمد', 'hours': 30, 'rank': 6, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704c', 'medal': 'none'},
   ];
 
   @override
