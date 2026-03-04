@@ -1,28 +1,6 @@
 import 'package:flutter/material.dart';
-import 'chatMain.dart';
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'UI Design',
-      theme: ThemeData(
-        fontFamily: 'Arial',
-        useMaterial3: true,
-      ),
-      home: const Directionality(
-        textDirection: TextDirection.rtl,
-        child: HomePage(),
-      ),
-    );
-  }
-}
+import 'Leaderboard.dart';
+import 'Setting.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,22 +11,25 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<Map<String, String>> _allItems = [
-    {'title': 'تصميم الواجهات', 'name': 'محمد أحمد', 'image': 'assets/user1.png'},
-    {'title': 'البرمجة', 'name': 'شذا محمد', 'image': 'assets/user2.png'},
-    {'title': 'اللغة الانجليزية', 'name': 'مهند فيصل', 'image': 'assets/user3.png'},
-    {'title': 'الكروشيه', 'name': 'نورة محمد', 'image': 'assets/user4.png'},
-    {'title': 'المواقع الالكترونية', 'name': 'أحمد عبدالحميد', 'image': 'assets/user5.png'},
+    {'title': 'تصميم الواجهات', 'name': 'محمد أحمد', 'image': 'https://i.pravatar.cc/150?u=11'},
+    {'title': 'برمجة فلاتر', 'name': 'شذا محمد', 'image': 'https://i.pravatar.cc/150?u=12'},
+    {'title': 'اللغة الانجليزية', 'name': 'مهند فيصل', 'image': 'https://i.pravatar.cc/150?u=13'},
+    {'title': 'تطوير المواقع', 'name': 'نورة محمد', 'image': 'https://i.pravatar.cc/150?u=14'},
+    {'title': 'تحليل البيانات', 'name': 'أحمد عبدالحميد', 'image': 'https://i.pravatar.cc/150?u=15'},
+    {'title': 'التسويق الرقمي', 'name': 'سارة علي', 'image': 'https://i.pravatar.cc/150?u=16'},
+    {'title': 'الأمن السيبراني', 'name': 'خالد فهد', 'image': 'https://i.pravatar.cc/150?u=17'},
+    {'title': 'إدارة المشاريع', 'name': 'ريم عبدالله', 'image': 'https://i.pravatar.cc/150?u=18'},
+    {'title': 'الذكاء الاصطناعي', 'name': 'فيصل حسن', 'image': 'https://i.pravatar.cc/150?u=19'},
+    {'title': 'التصميم الجرافيكي', 'name': 'ليلى إبراهيم', 'image': 'https://i.pravatar.cc/150?u=20'},
   ];
 
   List<Map<String, String>> _displayedItems = [];
-
-  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController( );
 
   @override
   void initState() {
     super.initState();
     _displayedItems = List.from(_allItems);
-
     _searchController.addListener(_filterItems);
   }
 
@@ -76,118 +57,86 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF3F6FB),
-      body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                    )
-                  ],
-                ),
-                child: TextField(
-                  controller: _searchController,
-                  textAlign: TextAlign.right,
-                  decoration: const InputDecoration(
-                    hintText: 'بحث في المهارات أو الأشخاص...',
-                    prefixIcon: Icon(Icons.search, color: Colors.grey),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF7F6F3),
+        body: SafeArea(
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+                  ),
+                  child: TextField(
+                    controller: _searchController,
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(fontSize: 18),
+                    decoration: const InputDecoration(
+                      hintText: 'بحث في المهارات أو الأشخاص...',
+                      prefixIcon: Icon(Icons.search, color: Colors.grey),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 15),
-            _buildCategories(),
-            const SizedBox(height: 15),
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: _displayedItems.length,
-                itemBuilder: (context, index) {
-                  final item = _displayedItems[index];
-                  return _buildCard(item['title']!, item['name']!, item['image']!);
-                },
+              const SizedBox(height: 20),
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: _displayedItems.length,
+                  itemBuilder: (context, index) {
+                    final item = _displayedItems[index];
+                    return _buildCard(item['title']!, item['name']!, item['image']!);
+                  },
+                ),
               ),
-            ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: const Color(0xFF1A237E),
+          unselectedItemColor: Colors.grey,
+          currentIndex: 0,
+          onTap: (index) {
+            if (index == 4) Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting()));
+            if (index == 1) Navigator.push(context, MaterialPageRoute(builder: (context) => const Leaderboard()));
+          },
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
+            BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
+            BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'الدردشة'),
+            BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'الملف الشخصي'),
+            BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الاعدادات'),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF1A237E),
-        unselectedItemColor: Colors.grey,
-        currentIndex: 4,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الاعدادات'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'الملف الشخصي'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'الدردشة'),
-          BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
-        ],
-      ),
     );
   }
 
-  Widget _buildCategories() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: Row(
-        children: ['التقنية', 'التصميم', 'الحرف اليدوية', 'الرياضيات']
-            .map((name) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Chip(
-                    label: Text(name),
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    side: const BorderSide(color: Colors.black12),
-                  ),
-                ))
-            .toList(),
-      ),
-    );
-  }
-
-  Widget _buildCard(String title, String name, String imagePath) {
+  Widget _buildCard(String title, String name, String imageUrl) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: Colors.transparent,
-            backgroundImage: AssetImage(imagePath),
-          ),
+          CircleAvatar(radius: 35, backgroundColor: Colors.grey[200], backgroundImage: NetworkImage(imageUrl)),
           const SizedBox(width: 15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  name,
-                  style: const TextStyle(color: Colors.grey, fontSize: 14),
-                ),
+                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                const SizedBox(height: 4),
+                Text(name, style: const TextStyle(color: Colors.grey, fontSize: 16)),
               ],
             ),
           ),
