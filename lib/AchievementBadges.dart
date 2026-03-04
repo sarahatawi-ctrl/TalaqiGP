@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:share_plus/share_plus.dart';
+import 'HomePage.dart';
 
 class AchievementBadges extends StatelessWidget {
   const AchievementBadges({super.key});
@@ -8,7 +9,7 @@ class AchievementBadges extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF7F6F3),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -28,9 +29,11 @@ class AchievementBadges extends StatelessWidget {
                         child: IconButton(
                           icon: const Icon(Icons.close, color: Colors.black87, size: 28),
                           onPressed: () {
-                            if (Navigator.canPop(context)) {
-                              Navigator.pop(context);
-                            }
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (context) => const HomePage()),
+                              (route) => false,
+                            );
                           },
                         ),
                       ),
