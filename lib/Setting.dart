@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'WelcomeScreen.dart'; 
-
+import 'AIWelcomeScreen.dart'; 
+import 'LoginScreen.dart';
+import 'Leaderboard.dart';
+import 'HomePage.dart';
+import 'allRequests.dart';
 
 class Setting extends StatefulWidget {
   const Setting({super.key});
@@ -20,7 +23,7 @@ class _TalaaqAppState extends State<Setting> {
       locale: const Locale('ar', 'SA'),
       theme: ThemeData(
         brightness: Brightness.light,
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: const Color(0xFFF7F6F3),
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
@@ -36,17 +39,17 @@ class _TalaaqAppState extends State<Setting> {
               onLogout: () => setState(() => _isLoggedIn = false),
             )
           : Scaffold(
+              backgroundColor: const Color(0xFFF7F6F3),
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("تم تسجيل الخروج بنجاح", style: TextStyle(fontSize: 20)),
+                    const Text("تم تسجيل الخروج بنجاح", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {
-                        setState(() => _isLoggedIn = true);
-                      },
-                      child: const Text(" تسجيل الدخول"),
+                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2E4365), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)), padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12)),
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen())),
+                      child: const Text("تسجيل الدخول", style: TextStyle(color: Colors.white, fontSize: 16)),
                     )
                   ],
                 ),
@@ -62,88 +65,15 @@ class SettingsPage extends StatelessWidget {
   final ValueChanged<bool> onThemeChanged;
   final VoidCallback onLogout;
 
-  const SettingsPage({
-    super.key, 
-    required this.isDarkMode, 
-    required this.onThemeChanged,
-    required this.onLogout,
-  });
-
-  // FAQ Dialog 
-  void showFAQDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text('الأسئلة الشائعة', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold)),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildFAQItem('ما هو تطبيق تلاقِ؟', 'هو تعزيز ثقافة تبادل المعرفة بشكل تطوعي، حيث يمنح كل مستخدم فرصة ليكون معلماً ومتعلماً في آن واحد'),
-                  _buildFAQItem('كيف يمكنني مشاركة مهاراتي؟', ' أضف مهاراتك في ملفك الشخصي، وستجد من يحتاج تعلم هذه المهارة'),
-                  _buildFAQItem('كيف يتم توثيق الساعات التطوعية؟', 'يوفر التطبيق نظاماً داخلياً يحسب ساعات الجلسات التعليمية ويوثقها كعمل تطوعي معتمد داخل المنصة'),
-                  _buildFAQItem('هل هناك رسوم مادية؟', 'لا، التطبيق قائم كلياً على مبدأ التطوع وتبادل المنفعة المعرفية بدون أي مقابل مادي'),
-                  _buildFAQItem('ما الفائدة من جمع الأوسمة؟', 'الأوسمة هي تقدير رقمي لجهودك التطوعية، وتساهم في رفع رتبتك في لوحة الصدارة لزيادة فرصك في التعاون'),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('إغلاق',style: TextStyle(color: Color(0xFF2E4365)),)),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildFAQItem(String question, String answer) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(question, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF344966))),
-          const SizedBox(height: 4),
-          Text(answer, style: const TextStyle(fontSize: 14, color: Colors.grey)),
-          const Divider(),
-        ],
-      ),
-    );
-  }
-
-  void showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text('تسجيل الخروج'),
-          content: const Text('هل أنت متأكد أنك تريد مغادرة التطبيق الآن؟'),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء',style: TextStyle(color: Color(0xFF2E4365)),)),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                onLogout();
-              }, 
-              child: const Text('خروج', style: TextStyle(color: Colors.red))
-            ),
-          ],
-        );
-      },
-    );
-  }
+  const SettingsPage({super.key, required this.isDarkMode, required this.onThemeChanged, required this.onLogout});
 
   @override
   Widget build(BuildContext context) {
     const Color primaryNavy = Color(0xFF344966);
-    Color sectionBg = isDarkMode ? Colors.grey[900]! : const Color(0xFFF3F5F9);
+    Color sectionBg = isDarkMode ? Colors.grey[900]! : Colors.white;
 
     return Scaffold(
+      backgroundColor: isDarkMode ? const Color(0xFF121212) : const Color(0xFFF7F6F3),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -163,15 +93,12 @@ class SettingsPage extends StatelessWidget {
               child: Column(
                 children: [
                   buildSettingsItem(Icons.person_outline, 'الملف الشخصي', isDarkMode, () {}),
-                  
                   buildSettingsItem(Icons.lightbulb_outline, 'مساعدك في التعلم', isDarkMode, () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-                    );
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AIWelcomeScreen()));
                   }),
-                  
-                  buildSettingsItem(Icons.notifications_none, 'جلسات التعلم', isDarkMode, () {}, isLast: true),
+                  buildSettingsItem(Icons.notifications_none, 'جلسات التعلم', isDarkMode, () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const allRequests()));
+                  }, isLast: true),
                 ],
               ),
             ),
@@ -193,13 +120,31 @@ class SettingsPage extends StatelessWidget {
               decoration: BoxDecoration(color: sectionBg, borderRadius: BorderRadius.circular(15)),
               child: Column(
                 children: [
-                  buildSettingsItem(Icons.help_outline, 'الأسئلة الشائعة', isDarkMode, () => showFAQDialog(context)),
-                  buildSettingsItem(Icons.logout, 'تسجيل الخروج', isDarkMode, () => showLogoutDialog(context), isLast: true),
+                  buildSettingsItem(Icons.help_outline, 'الأسئلة الشائعة', isDarkMode, () {}),
+                  buildSettingsItem(Icons.logout, 'تسجيل الخروج', isDarkMode, onLogout, isLast: true),
                 ],
               ),
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: const Color(0xFF1A237E),
+        unselectedItemColor: Colors.grey,
+        currentIndex: 4,
+        onTap: (index) {
+          if (index == 0) Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
+          if (index == 1) Navigator.push(context, MaterialPageRoute(builder: (context) => const Leaderboard()));
+          if (index == 2) Navigator.push(context, MaterialPageRoute(builder: (context) => const allRequests()));
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
+          BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'المحادثة'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'الملف الشخصي'),
+          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الاعدادات'),
+        ],
       ),
     );
   }
