@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'ChatbotView.dart'; 
 
-class WelcomeScreen extends StatelessWidget {
+class AIWelcomeScreen extends StatelessWidget {
   final VoidCallback? onContinue;
 
-  const WelcomeScreen({super.key, this.onContinue});
+  const AIWelcomeScreen({super.key, this.onContinue});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: const Color(0xFFF7F6F3),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF2C2C2C)),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF2E4365)),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -38,7 +38,7 @@ class WelcomeScreen extends StatelessWidget {
                           Text(
                             'مساعدك في التعلم!',
                             style: TextStyle(
-                              fontSize: isSmallScreen ? 22 : 24,
+                              fontSize: isSmallScreen ? 28 : 32,
                               fontWeight: FontWeight.bold,
                               color: const Color(0xFF2C2C2C),
                             ),
@@ -51,7 +51,7 @@ class WelcomeScreen extends StatelessWidget {
                             child: Text(
                               'باستخدام مساعد الذكاء الاصطناعي\nستتمكن من اختيار جلسة التعلم المناسبة',
                               style: TextStyle(
-                                fontSize: isSmallScreen ? 14 : 16,
+                                fontSize: isSmallScreen ? 18 : 20,
                                 color: const Color(0xFF8A8A8A),
                                 height: 1.5,
                               ),
@@ -89,7 +89,7 @@ class WelcomeScreen extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF3A4F6C),
+                        backgroundColor: const Color(0xFF2E4365),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
                         elevation: 0,
                       ),
