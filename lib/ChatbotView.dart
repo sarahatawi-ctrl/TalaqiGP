@@ -19,7 +19,7 @@ class _ChatbotViewState extends State<ChatbotView> {
     super.initState();
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
+      ..setBackgroundColor(const Color(0xFF2E4365))
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (String url) => setState(() => _isLoading = false),
@@ -33,15 +33,22 @@ class _ChatbotViewState extends State<ChatbotView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('المساعد الذكي'),
-        backgroundColor: Colors.transparent, 
+        title: const Text(
+          'مساعدك الذكي نبراس ',
+          style: TextStyle(
+            color: Colors.white, 
+            fontWeight: FontWeight.bold, 
+            fontSize: 22, 
+          ),
+        ),
+        backgroundColor: const Color(0xFF2E4365),
         elevation: 0,
       ),
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF3A4F6C), Color(0xFF2C3E50)],
+            colors: [Color(0xFF2E4365), Color(0xFF2E4365)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
