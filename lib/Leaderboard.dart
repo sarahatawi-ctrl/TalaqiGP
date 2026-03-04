@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'BadgesScreen.dart';
+import 'HomePage.dart';
+import 'Setting.dart';
 
 class Leaderboard extends StatelessWidget {
   const Leaderboard({super.key});
@@ -13,11 +15,11 @@ class Leaderboard extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context ) {
+  Widget build(BuildContext context  ) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF0F2F5),
+        backgroundColor: const Color(0xFFF7F6F3),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(150.0),
           child: AppBar(
@@ -26,7 +28,7 @@ class Leaderboard extends StatelessWidget {
             flexibleSpace: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF4A6FA5), Color(0xFF5B7FB8)],
+                  colors: [Color(0xFF2E4365), Color(0xFF2E4365)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -40,12 +42,8 @@ class Leaderboard extends StatelessWidget {
                   child: Column(
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-                            onPressed: () => Navigator.pop(context),
-                          ),
                           GestureDetector(
                             onTap: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context) => const BadgesScreen()));
@@ -71,9 +69,9 @@ class Leaderboard extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
-                            Text('لوحة الصدارة', style: TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold)),
+                            Text('لوحة الصدارة', style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
                             SizedBox(height: 4),
-                            Text('متطوعين الشهر', style: TextStyle(color: Colors.white70, fontSize: 16)),
+                            Text('متطوعين الشهر', style: TextStyle(color: Colors.white70, fontSize: 18)),
                           ],
                         ),
                       ),
@@ -97,6 +95,23 @@ class Leaderboard extends StatelessWidget {
               medalType: volunteer['medal']!,
             );
           },
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: const Color(0xFF1A237E),
+          unselectedItemColor: Colors.grey,
+          currentIndex: 1,
+          onTap: (index) {
+            if (index == 0) Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
+            if (index == 4) Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting()));
+          },
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
+            BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
+            BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'الدردشة'),
+            BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'الملف الشخصي'),
+            BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الاعدادات'),
+          ],
         ),
       ),
     );
@@ -152,7 +167,7 @@ class LeaderboardCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: isTopThree ? const Color(0xFF4A6FA5) : Colors.grey.shade600,
+                  color: isTopThree ? const Color(0xFF2E4365) : Colors.grey.shade600,
                 ),
               ),
             ),
