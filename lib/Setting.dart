@@ -1,165 +1,123 @@
 import 'package:flutter/material.dart';
-import 'AIWelcomeScreen.dart'; 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'LoginScreen.dart';
-import 'Leaderboard.dart';
-import 'HomePage.dart';
-import 'allRequests.dart';
 
-class Setting extends StatefulWidget {
-  const Setting({super.key});
-
-  @override
-  State<Setting> createState() => _TalaaqAppState();
+abstract class RegisterState {}
+class RegisterInitial extends RegisterState {}
+class RegisterLoading extends RegisterState {}
+class RegisterSuccess extends RegisterState {}
+class RegisterFailure extends RegisterState {
+  final String message;
+  RegisterFailure(this.message);
 }
 
-class _TalaaqAppState extends State<Setting> {
-  bool _isDark = false;
-  bool _isLoggedIn = true; 
+class RegisterCubit extends Cubit<RegisterState> {
+  RegisterCubit() : super(RegisterInitial());
+  Future<void> register(String email, String password) async {
+    emit(RegisterLoading());
+    await Future.delayed(const Duration(seconds: 1));
+    emit(RegisterSuccess());
+  }
+}
+
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  final email = TextEditingController();
+  final pass = TextEditingController();
+  final confirmPass = TextEditingController(); 
+
+  @override
+  void dispose() {
+    email.dispose(); pass.dispose(); confirmPass.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      locale: const Locale('ar', 'SA'),
-      theme: ThemeData(
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: const Color(0xFFF7F6F3),
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF121212),
-      ),
-      themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
-      home: Directionality(
+    return BlocProvider(
+      create: (context) => RegisterCubit(),
+      child: Directionality(
         textDirection: TextDirection.rtl,
-        child: _isLoggedIn 
-          ? SettingsPage(
-              isDarkMode: _isDark,
-              onThemeChanged: (value) => setState(() => _isDark = value),
-              onLogout: () => setState(() => _isLoggedIn = false),
-            )
-          : Scaffold(
-              backgroundColor: const Color(0xFFF7F6F3),
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("تم تسجيل الخروج بنجاح", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2E4365), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)), padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12)),
-                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen())),
-                      child: const Text("تسجيل الدخول", style: TextStyle(color: Colors.white, fontSize: 16)),
-                    )
-                  ],
-                ),
-              ),
+        child: Scaffold(
+          backgroundColor: const Color(0xFFF7F6F3),
+          body: Padding(
+            padding: const EdgeInsets.all(20),
+            child: BlocConsumer<RegisterCubit, RegisterState>(
+              listener: (context, state) {
+                if (state is RegisterSuccess) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("تم إنشاء الحساب بنجاح"), backgroundColor: Colors.green),
+                  );
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  );
+                }
+              },
+              builder: (context, state) {
+                return Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const Text('تلاق', style: TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Color(0xFF2E4365))),
+                        const Text('حيث تلتقي المهارات', style: TextStyle(fontSize: 16, color: Colors.grey)),
+                        const SizedBox(height: 40),
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 4))],
+                          ),
+                          child: Column(
+                            children: [
+                              TextField(
+                                controller: email, 
+                                textAlign: TextAlign.right,
+                                decoration: InputDecoration(hintText: 'البريد الإلكتروني', filled: true, fillColor: const Color(0xFFF7F6F3), border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none))
+                              ),
+                              const SizedBox(height: 12),
+                              TextField(
+                                controller: pass, 
+                                textAlign: TextAlign.right,
+                                obscureText: true, 
+                                decoration: InputDecoration(hintText: 'كلمة المرور', filled: true, fillColor: const Color(0xFFF7F6F3), border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none))
+                              ),
+                              const SizedBox(height: 12),
+                              TextField(
+                                controller: confirmPass, 
+                                textAlign: TextAlign.right,
+                                obscureText: true, 
+                                decoration: InputDecoration(hintText: 'تأكيد كلمة المرور', filled: true, fillColor: const Color(0xFFF7F6F3), border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none))
+                              ),
+                              const SizedBox(height: 20),
+                              state is RegisterLoading
+                                  ? const CircularProgressIndicator()
+                                  : SizedBox(width: double.infinity, height: 50, child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2E4365), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))), onPressed: () => context.read<RegisterCubit>().register(email.text.trim(), pass.text.trim()), child: const Text("إنشاء الحساب", style: TextStyle(color: Colors.white)))),
+                              const SizedBox(height: 16),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context); 
+                                },
+                                child: const Text('لديك حساب؟ سجل', style: TextStyle(color: Color(0xFF2E4365))),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
-      ),
-    );
-  }
-}
-
-class SettingsPage extends StatelessWidget {
-  final bool isDarkMode;
-  final ValueChanged<bool> onThemeChanged;
-  final VoidCallback onLogout;
-
-  const SettingsPage({super.key, required this.isDarkMode, required this.onThemeChanged, required this.onLogout});
-
-  @override
-  Widget build(BuildContext context) {
-    const Color primaryNavy = Color(0xFF344966);
-    Color sectionBg = isDarkMode ? Colors.grey[900]! : Colors.white;
-
-    return Scaffold(
-      backgroundColor: isDarkMode ? const Color(0xFF121212) : const Color(0xFFF7F6F3),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: Text('الإعدادات', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontWeight: FontWeight.bold)),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            const Text('الحساب', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(color: sectionBg, borderRadius: BorderRadius.circular(15)),
-              child: Column(
-                children: [
-                  buildSettingsItem(Icons.person_outline, 'الملف الشخصي', isDarkMode, () {}),
-                  buildSettingsItem(Icons.lightbulb_outline, 'مساعدك في التعلم', isDarkMode, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AIWelcomeScreen()));
-                  }),
-                  buildSettingsItem(Icons.notifications_none, 'جلسات التعلم', isDarkMode, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const allRequests()));
-                  }, isLast: true),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-            const Text('التفضيلات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(color: sectionBg, borderRadius: BorderRadius.circular(15)),
-              child: ListTile(
-                leading: Icon(Icons.dark_mode_outlined, color: isDarkMode ? Colors.white70 : Colors.black54),
-                title: const Text('الوضع الداكن', style: TextStyle(fontSize: 16)),
-                trailing: Switch(value: isDarkMode, onChanged: onThemeChanged, activeColor: primaryNavy),
-              ),
-            ),
-            const SizedBox(height: 30),
-            const Text('الإجراءات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(color: sectionBg, borderRadius: BorderRadius.circular(15)),
-              child: Column(
-                children: [
-                  buildSettingsItem(Icons.help_outline, 'الأسئلة الشائعة', isDarkMode, () {}),
-                  buildSettingsItem(Icons.logout, 'تسجيل الخروج', isDarkMode, onLogout, isLast: true),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF1A237E),
-        unselectedItemColor: Colors.grey,
-        currentIndex: 4,
-        onTap: (index) {
-          if (index == 0) Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
-          if (index == 1) Navigator.push(context, MaterialPageRoute(builder: (context) => const Leaderboard()));
-          if (index == 2) Navigator.push(context, MaterialPageRoute(builder: (context) => const allRequests()));
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
-          BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'المحادثة'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'الملف الشخصي'),
-          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الاعدادات'),
-        ],
-      ),
-    );
-  }
-
-  Widget buildSettingsItem(IconData icon, String title, bool isDark, VoidCallback onTap, {bool isLast = false}) {
-    return Column(
-      children: [
-        ListTile(
-          leading: Icon(icon, color: isDark ? Colors.white70 : Colors.black54),
-          title: Text(title, style: const TextStyle(fontSize: 16)),
-          trailing: const Icon(Icons.arrow_back_ios, size: 16, color: Colors.black26),
-          onTap: onTap,
-        ),
-        if (!isLast) Divider(height: 1, indent: 50, endIndent: 20, color: isDark ? Colors.white10 : Colors.black12),
-      ],
     );
   }
 }
