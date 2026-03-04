@@ -1,24 +1,11 @@
 import 'package:flutter/material.dart';
-import 'requests_page.dart';
+import 'RequestsPage.dart';
+import 'HomePage.dart';
+import 'Leaderboard.dart';
+import 'Setting.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: ChatPage(),
-    );
-  }
-}
-
-class ChatPage extends StatelessWidget {
-  const ChatPage({super.key});
+class allRequests extends StatelessWidget {
+  const allRequests({super.key});
 
   static const Color primaryColor = Color(0xFF2E4365);
 
@@ -27,7 +14,7 @@ class ChatPage extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF5F7FA),
+        backgroundColor: const Color(0xFFF7F6F3),
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
@@ -58,8 +45,7 @@ class ChatPage extends StatelessWidget {
                 ),
               ),
             ),
-            _buildSessionCard(
-                'كروشيه', 'هند', 'assets/greenProfileIcon.png'),
+            _buildSessionCard('كروشيه', 'هند', 'https://i.pravatar.cc/150?u=green' ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Align(
@@ -73,19 +59,15 @@ class ChatPage extends StatelessWidget {
                 ),
               ),
             ),
-            _buildSessionCard(
-                'تصميم واجهات', 'بواسطة محمد احمد', 'assets/user1.png'),
-            _buildSessionCard(
-                'البرمجة', 'بواسطة شذى محمد', 'assets/user2.png'),
+            _buildSessionCard('تصميم واجهات', 'بواسطة محمد احمد', 'https://i.pravatar.cc/150?u=user1' ),
+            _buildSessionCard('البرمجة', 'بواسطة شذى محمد', 'https://i.pravatar.cc/150?u=user2' ),
           ],
         ),
-
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => const RequestsPage()),
+              MaterialPageRoute(builder: (context) => const RequestsPage()),
             );
           }, 
           backgroundColor: primaryColor,
@@ -98,34 +80,29 @@ class ChatPage extends StatelessWidget {
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           selectedItemColor: primaryColor,
           unselectedItemColor: Colors.grey,
           currentIndex: 2,
+          onTap: (index) {
+            if (index == 0) Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
+            if (index == 1) Navigator.push(context, MaterialPageRoute(builder: (context) => const Leaderboard()));
+            if (index == 4) Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting()));
+          },
           items: const [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.list), label: 'الإعدادات'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.person_outline),
-                label: 'الملف الشخصي'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.chat_bubble_outline),
-                label: 'المحادثة'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.star_border),
-                label: 'لوحة الصدارة'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.home), label: 'الرئيسي'),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
+            BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
+            BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'المحادثة'),
+            BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'الملف الشخصي'),
+            BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الاعدادات'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSessionCard(
-      String title, String subtitle, String imagePath) {
+  Widget _buildSessionCard(String title, String subtitle, String imageUrl) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       padding: const EdgeInsets.all(14),
@@ -141,12 +118,11 @@ class ChatPage extends StatelessWidget {
         ],
       ),
       child: Row(
-        textDirection: TextDirection.rtl,
         children: [
           CircleAvatar(
             radius: 26,
             backgroundColor: Colors.grey[200],
-            backgroundImage: AssetImage(imagePath),
+            backgroundImage: NetworkImage(imageUrl),
           ),
           const SizedBox(width: 15),
           Expanded(
@@ -155,27 +131,17 @@ class ChatPage extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 13,
-                  ),
+                  style: const TextStyle(color: Colors.grey, fontSize: 13),
                 ),
               ],
             ),
           ),
-          const Icon(
-            Icons.arrow_forward_ios,
-            size: 16,
-            color: primaryColor,
-          ),
+          const Icon(Icons.arrow_forward_ios, size: 16, color: primaryColor),
         ],
       ),
     );
