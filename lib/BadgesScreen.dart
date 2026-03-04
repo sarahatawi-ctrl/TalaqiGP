@@ -1,28 +1,11 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-
-      home: BadgesScreen(),
-    );
-  }
-}
-
 class BadgesScreen extends StatelessWidget {
   const BadgesScreen({Key? key}) : super(key: key);
 
   static const Color primaryColor = Color(0xFF4A6FA5);
   static const Color accentColor = Color(0xFFD9534F);
-  static const Color backgroundColor = Color(0xFFF0F2F5);
+  static const Color backgroundColor = Color(0xFFF7F6F3);
   static const Color textColor = Color(0xFF333333);
   static const Color lockedColor = Color(0xFFB0BCC5);
 
@@ -64,7 +47,6 @@ class BadgesScreen extends StatelessWidget {
             
             Expanded(
               child: GridView.count(
-                
                 crossAxisCount: 3,
                 padding: const EdgeInsets.all(16),
                 crossAxisSpacing: 12,
