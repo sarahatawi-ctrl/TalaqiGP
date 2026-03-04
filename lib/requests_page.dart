@@ -1,21 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: RequestsPage(),
-    );
-  }
-}
-
 class RequestsPage extends StatefulWidget {
   const RequestsPage({super.key});
 
@@ -25,7 +9,6 @@ class RequestsPage extends StatefulWidget {
 
 class _RequestsPageState extends State<RequestsPage> {
   static const Color primaryColor = Color(0xFF2E4365);
-
   String? status; 
 
   @override
@@ -33,7 +16,7 @@ class _RequestsPageState extends State<RequestsPage> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF5F7FA),
+        backgroundColor: const Color(0xFFF7F6F3),
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
@@ -65,12 +48,8 @@ class _RequestsPageState extends State<RequestsPage> {
                 ),
               ),
               const SizedBox(height: 25),
-
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(18),
@@ -87,57 +66,34 @@ class _RequestsPageState extends State<RequestsPage> {
                   children: [
                     const Text(
                       'الكروشية',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                      ),
+                      style: TextStyle(color: Colors.grey, fontSize: 14),
                     ),
                     const SizedBox(height: 12),
-
                     Row(
                       children: [
                         const CircleAvatar(
                           radius: 26,
-                          backgroundImage:
-                              AssetImage('assets/redProfileIcon.png'),
+                          backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=redProfile' ),
                         ),
                         const SizedBox(width: 15),
-
                         const Expanded(
                           child: Text(
                             'فجر',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                           ),
                         ),
-
                         if (status == null) ...[
                           IconButton(
-                            icon: const Icon(Icons.close,
-                                color: primaryColor),
-                            onPressed: () {
-                              setState(() {
-                                status = "rejected";
-                              });
-                            },
+                            icon: const Icon(Icons.close, color: primaryColor),
+                            onPressed: () => setState(() => status = "rejected"),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.check,
-                                color: primaryColor),
-                            onPressed: () {
-                              setState(() {
-                                status = "accepted";
-                              });
-                            },
+                            icon: const Icon(Icons.check, color: primaryColor),
+                            onPressed: () => setState(() => status = "accepted"),
                           ),
-                        ]
-
-                        else
+                        ] else
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 6),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                             decoration: BoxDecoration(
                               color: status == "accepted"
                                   ? Colors.green.withOpacity(0.15)
@@ -147,9 +103,7 @@ class _RequestsPageState extends State<RequestsPage> {
                             child: Text(
                               status == "accepted" ? "مقبول" : "مرفوض",
                               style: TextStyle(
-                                color: status == "accepted"
-                                    ? Colors.green
-                                    : Colors.red,
+                                color: status == "accepted" ? Colors.green : Colors.red,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
