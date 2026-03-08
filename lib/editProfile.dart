@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:io'; 
+import 'package:flutter/foundation.dart' show kIsWeb; 
 
 void main() {
   runApp(const TalaaqApp());
@@ -36,7 +38,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     text: "مصمم مواقع مهتم بإنشاء واجهات مستخدم جذابة وسهلة الاستخدام مهتم بتحويل الأفكار المعقدة إلى تصاميم رقمية بسيطة ومبتكرة تخدم تجربة المستخدم."
   );
 
-  //Initial skills list
   List<String> skills = [
     "تصميم واجهات المستخدم (UI/UX)",
     "تطوير الويب (HTML/CSS)",
@@ -44,10 +45,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
   ];
   
   final ImagePicker _picker = ImagePicker();
+  dynamic _imageSelection; 
 
   Future<void> _pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
+      setState(() {
+        if (kIsWeb) {
+          _imageSelection = image.path; 
+        } else {
+          _imageSelection = File(image.path); 
+        }
+      });
       debugPrint("Image selected: ${image.path}");
     }
   }
@@ -83,13 +92,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor:Color(0xFF2E4365),
+        backgroundColor: const Color(0xFF2E4365),
         elevation: 0,
-        title: const Text('تعديل الملف الشخصي', selectionColor: primaryNavy, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text('تعديل الملف الشخصي', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.arrow_forward_ios, size: 22,color: Colors.white),
+            icon: const Icon(Icons.arrow_forward_ios, size: 22, color: Colors.white),
             onPressed: () => Navigator.pop(context),
           ),
           const SizedBox(width: 10),
@@ -103,9 +112,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
             Center(
               child: Stack(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 70,
-                    backgroundImage: NetworkImage('https://i.pravatar.cc/300?img=12'),
+                    backgroundColor: Colors.grey[200],
+                    
+                    backgroundImage: _imageSelection == null
+                        ? const NetworkImage('https://i.pravatar.cc/300?img=12')
+                        : (kIsWeb 
+                            ? NetworkImage(_imageSelection as String) 
+                            : FileImage(_imageSelection as File)) as ImageProvider,
                   ),
                   Positioned(
                     bottom: 0,
@@ -115,7 +130,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: const BoxDecoration(color: Color(0xFF2E4365), shape: BoxShape.circle),
-                        child: const Icon(Icons.camera_alt_outlined, color:Color.fromARGB(255, 183, 200, 228), size: 20),
+                        child: const Icon(Icons.camera_alt_outlined, color: Color.fromARGB(255, 183, 200, 228), size: 20),
                       ),
                     ),
                   ),
@@ -124,7 +139,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             const SizedBox(height: 30),
             
-            buildInteractiveField("الأسم", _nameController),
+            buildInteractiveField("الاسم", _nameController),
             const SizedBox(height: 20),
             buildInteractiveField("البريد الالكتروني", _emailController),
             const SizedBox(height: 20),
@@ -143,15 +158,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             const SizedBox(height: 10),
 
-            // skill fields with logic for placeholders
             ...skills.map((skill) => buildInteractiveField(null, TextEditingController(text: skill), isSkill: true, initialValue: skill)).toList(),
 
-            const SizedBox(height: 25),
-            
-            
             const SizedBox(height: 40),
             
-            // save button
             SizedBox(
               width: 200,
               height: 50,
@@ -176,7 +186,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'الاعدادات'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'الملف الشخصي'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'الدردشة'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'المحادثة'),
           BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'الرئيسية'),
         ],
@@ -185,7 +195,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Widget buildInteractiveField(String? label, TextEditingController controller, {bool isLongField = false, bool isSkill = false, String initialValue = ""}) {
-    // If the skill is newly added (empty string), start in edit mode
     bool _isEditing = initialValue.isEmpty && isSkill;
     
     return StatefulBuilder(
@@ -202,7 +211,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
               minLines: isLongField ? 3 : 1,
               style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
               decoration: InputDecoration(
-                // placeholder appears only when the skill field is new
                 hintText: (isSkill && initialValue.isEmpty) ? "أدخل مهارة جديدة" : null,
                 hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.normal),
                 suffixIcon: IconButton(
