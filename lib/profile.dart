@@ -12,9 +12,9 @@ class TalaaqApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       locale: const Locale('ar', 'SA'),
-      home: Directionality(
+      home: const Directionality(
         textDirection: TextDirection.rtl,
-        child: const ProfilePage(),
+        child: ProfilePage(),
       ),
     );
   }
@@ -28,8 +28,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  
-
   @override
   Widget build(BuildContext context) {
     const Color primaryNavy = Color(0xFF344966);
@@ -39,7 +37,6 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Header section with curve and avatar
             Stack(
               alignment: Alignment.center,
               clipBehavior: Clip.none,
@@ -51,12 +48,20 @@ class _ProfilePageState extends State<ProfilePage> {
                     color: primaryNavy,
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 25),
-                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.report_gmailerrorred_outlined, color: Colors.white, size: 28),
+                          onPressed: () {
+                            debugPrint("Reporting...");
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 25),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ],
                     ),
@@ -80,27 +85,19 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-            
             const SizedBox(height: 60),
-
-            // profile user name
             const Text(
               'محمد أحمد',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: primaryNavy),
             ),
             const SizedBox(height: 20),
-            
-            // action buttons row (edit profile & requests)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        // navigation
-                        debugPrint("Navigating to Edit Profile...");
-                      },
+                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryNavy,
                         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -112,10 +109,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(width: 15),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        // navigation
-                        debugPrint("Viewing Requests...");
-                      },
+                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryNavy,
                         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -127,10 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
             ),
-
             const SizedBox(height: 30),
-
-            // bio and skills information
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Column(
@@ -141,7 +132,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   buildStaticBox(
                     text: "مصمم مواقع مهتم بإنشاء واجهات مستخدم جذابة وسهلة الاستخدام مهتم بتحويل الأفكار المعقدة إلى تصاميم رقمية بسيطة ومبتكرة تخدم تجربة المستخدم.",
                   ),
-                  
                   const SizedBox(height: 20),
                   const Text('المهارات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
@@ -163,9 +153,9 @@ class _ProfilePageState extends State<ProfilePage> {
         unselectedItemColor: Colors.grey,
         currentIndex: 1, 
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الاعدادات'),
+          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الإعدادات'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'الملف الشخصي'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'الدردشة'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'المحادثة'),
           BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'الرئيسية'),
         ],
