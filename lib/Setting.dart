@@ -47,7 +47,11 @@ class _TalaaqAppState extends State<Setting> {
                     const Text("تم تسجيل الخروج بنجاح", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2E4365), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)), padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF2E4365), 
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)), 
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12)
+                      ),
                       onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen())),
                       child: const Text("تسجيل الدخول", style: TextStyle(color: Colors.white, fontSize: 16)),
                     )
@@ -67,9 +71,55 @@ class SettingsPage extends StatelessWidget {
 
   const SettingsPage({super.key, required this.isDarkMode, required this.onThemeChanged, required this.onLogout});
 
+
+  void _showFAQs(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text('الأسئلة الشائعة', textAlign: TextAlign.center, style: TextStyle(color: Color(0xFF2E4365), fontWeight: FontWeight.bold)),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                _buildFAQItem('ماهو تطبيق تلاق؟', 'هو تطبيق تعلمي يهدف لتبادل الخبرات والمهارات'),
+                const Divider(),
+                _buildFAQItem('هل التطبيق مجاني؟', 'نعم، تطبيق تلاق قائم على التطوع وبشكل مجاني بالكامل'),
+                const Divider(),
+                _buildFAQItem('كيف أتواصل مع شريك التعلم؟', 'بمجرد قبول الطلب، ستفتح لك نافذة المحادثة المباشرة مع الشريك'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('إغلاق', style: TextStyle(color: Color(0xFF2E4365))),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildFAQItem(String question, String answer) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(question, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          const SizedBox(height: 5),
+          Text(answer, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    const Color primaryNavy = Color(0xFF344966);
+    const Color primaryNavy = Color(0xFF2E4365); 
     Color sectionBg = isDarkMode ? Colors.grey[900]! : Colors.white;
 
     return Scaffold(
@@ -92,11 +142,11 @@ class SettingsPage extends StatelessWidget {
               decoration: BoxDecoration(color: sectionBg, borderRadius: BorderRadius.circular(15)),
               child: Column(
                 children: [
-                  buildSettingsItem(Icons.person_outline, 'الملف الشخصي', isDarkMode, () {}),
-                  buildSettingsItem(Icons.lightbulb_outline, 'مساعدك في التعلم', isDarkMode, () {
+                  buildSettingsItem(Icons.person_outline, 'الملف الشخصي', isDarkMode, primaryNavy, () {}),
+                  buildSettingsItem(Icons.lightbulb_outline, 'مساعدك في التعلم', isDarkMode, primaryNavy, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const AIWelcomeScreen()));
                   }),
-                  buildSettingsItem(Icons.notifications_none, 'جلسات التعلم', isDarkMode, () {
+                  buildSettingsItem(Icons.notifications_none, 'جلسات التعلم', isDarkMode, primaryNavy, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const allRequests()));
                   }, isLast: true),
                 ],
@@ -108,9 +158,9 @@ class SettingsPage extends StatelessWidget {
             Container(
               decoration: BoxDecoration(color: sectionBg, borderRadius: BorderRadius.circular(15)),
               child: ListTile(
-                leading: Icon(Icons.dark_mode_outlined, color: isDarkMode ? Colors.white70 : Colors.black54),
+                leading: const Icon(Icons.dark_mode_outlined, color: primaryNavy),
                 title: const Text('الوضع الداكن', style: TextStyle(fontSize: 16)),
-                trailing: Switch(value: isDarkMode, onChanged: onThemeChanged, activeColor: primaryNavy),
+                trailing: Switch(value: isDarkMode, onChanged: onThemeChanged, activeThumbColor: primaryNavy),
               ),
             ),
             const SizedBox(height: 30),
@@ -120,8 +170,10 @@ class SettingsPage extends StatelessWidget {
               decoration: BoxDecoration(color: sectionBg, borderRadius: BorderRadius.circular(15)),
               child: Column(
                 children: [
-                  buildSettingsItem(Icons.help_outline, 'الأسئلة الشائعة', isDarkMode, () {}),
-                  buildSettingsItem(Icons.logout, 'تسجيل الخروج', isDarkMode, onLogout, isLast: true),
+                 
+                  buildSettingsItem(Icons.help_outline, 'الأسئلة الشائعة', isDarkMode, primaryNavy, () => _showFAQs(context)),
+                  buildSettingsItem(Icons.assignment_outlined, 'متابعة البلاغات', isDarkMode, primaryNavy, () {}),
+                  buildSettingsItem(Icons.logout, 'تسجيل الخروج', isDarkMode, primaryNavy, onLogout, isLast: true),
                 ],
               ),
             ),
@@ -149,11 +201,11 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Widget buildSettingsItem(IconData icon, String title, bool isDark, VoidCallback onTap, {bool isLast = false}) {
+  Widget buildSettingsItem(IconData icon, String title, bool isDark, Color iconColor, VoidCallback onTap, {bool isLast = false}) {
     return Column(
       children: [
         ListTile(
-          leading: Icon(icon, color: isDark ? Colors.white70 : Colors.black54),
+          leading: Icon(icon, color: iconColor),
           title: Text(title, style: const TextStyle(fontSize: 16)),
           trailing: const Icon(Icons.arrow_back_ios, size: 16, color: Colors.black26),
           onTap: onTap,
