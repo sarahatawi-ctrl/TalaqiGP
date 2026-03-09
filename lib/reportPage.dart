@@ -47,20 +47,21 @@ class _ReportPageState extends State<ReportPage> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.check_circle, size: 80, color: Color(0xFF344966)),
+            const Icon(Icons.check_circle, size: 80, color: Color(0xFF2E4365)),
             const SizedBox(height: 20),
             const Text(
               "تم إرسال بلاغك بنجاح",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             const SizedBox(height: 10),
-            const Text("شكرًا لك على مساعدتنا في الحفاظ على مجتمع تلاقِ."),
+            const Text("شكرًا لك على مساعدتنا في الحفاظ على مجتمع تلاقِ.", textAlign: TextAlign.center),
+            const SizedBox(height: 20),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
-              child: const Text("موافق"),
+              child: const Text("موافق", style: TextStyle(color: Color(0xFF2E4365), fontWeight: FontWeight.bold)),
             )
           ],
         ),
@@ -70,19 +71,22 @@ class _ReportPageState extends State<ReportPage> {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryNavy = Color(0xFF344966);
+    
+    const Color primaryNavy = Color(0xFF2E4365); 
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: primaryNavy,
+      
+        backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        title: const Text("تقديم بلاغ", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text("تقديم بلاغ", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 22),
+           
+            icon: const Icon(Icons.arrow_forward_ios, color: primaryNavy, size: 22),
             onPressed: () => Navigator.pop(context),
           ),
           const SizedBox(width: 10),
