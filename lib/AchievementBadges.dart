@@ -1,258 +1,220 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
-import 'package:share_plus/share_plus.dart';
-import 'HomePage.dart';
 
-class AchievementBadges extends StatelessWidget {
-  const AchievementBadges({super.key});
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+
+      home: BadgesScreen(),
+    );
+  }
+}
+
+class BadgesScreen extends StatelessWidget {
+  const BadgesScreen({Key? key}) : super(key: key);
+
+  static const Color primaryColor = Color(0xFF4A6FA5);
+  static const Color accentColor = Color(0xFFD9534F);
+  static const Color backgroundColor = Color(0xFFF0F2F5);
+  static const Color textColor = Color(0xFF333333);
+  static const Color lockedColor = Color(0xFFB0BCC5);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F6F3),
+      backgroundColor: backgroundColor,
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            bool isLargeScreen = constraints.maxWidth > 600;
-            double horizontalPadding = isLargeScreen ? constraints.maxWidth * 0.25 : 24.0;
-            double badgeSize = isLargeScreen ? 300 : 240;
-
-            return Stack(
-              children: [
-                const ConfettiBackground(),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: IconButton(
-                          icon: const Icon(Icons.close, color: Colors.black87, size: 28),
-                          onPressed: () {
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(builder: (context) => const HomePage()),
-                              (route) => false,
-                            );
-                          },
-                        ),
-                      ),
-                      const Spacer(flex: 1),
-                      const Text(
-                        'أحسنت!',
-                        style: TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFF212121),
-                        ),
-                        textAlign: TextAlign.center,
-                        textDirection: TextDirection.rtl,
-                      ),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'لقد حصلت على وسام',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF424242),
-                        ),
-                        textAlign: TextAlign.center,
-                        textDirection: TextDirection.rtl,
-                      ),
-                      const Spacer(flex: 2),
-                      BadgeWidget(size: badgeSize),
-                      const Spacer(flex: 3),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 60,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Share.share(
-                              '🎉 لقد حصلت على وسام جديد في التطبيق لإكمالي 5 ساعات من التطوع! #إنجاز',
-                              subject: 'إنجاز جديد!',
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF2D4369),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            elevation: 2,
-                          ),
-                          child: const Text(
-                            'شارك',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                    ],
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 10.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: textColor,
+                      size: 24,
+                    ),
+                    onPressed: () => Navigator.pop(context),
                   ),
-                ),
-              ],
-            );
-          },
+                  const Text(
+                    'الأوسمة',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
+                  ),
+                  const SizedBox(width: 48), 
+                ],
+              ),
+            ),
+            
+            Expanded(
+              child: GridView.count(
+                
+                crossAxisCount: 3,
+                padding: const EdgeInsets.all(16),
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 0.65, 
+                children: [
+                  _buildProfessionalBadge('5', 'ساعات', true),
+                  _buildProfessionalBadge('10', 'ساعات', true),
+                  _buildProfessionalBadge('25', 'ساعة', true),
+                  _buildProfessionalBadge('50', 'ساعة', false),
+                  _buildProfessionalBadge('100', 'ساعة', false),
+                  _buildProfessionalBadge('200', 'ساعة', false),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
-}
 
-class BadgeWidget extends StatelessWidget {
-  final double size;
-  const BadgeWidget({super.key, required this.size});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(38), 
-            blurRadius: 40,
-            offset: const Offset(0, 20),
-          ),
-        ],
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          CustomPaint(
-            size: Size(size, size),
-            painter: SunburstPainter(),
-          ),
-          Container(
-            width: size * 0.7,
-            height: size * 0.7,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFFFFB347),
-                  Color(0xFFFF8C00),
-                ],
-              ),
-              border: Border.all(
-                color: Colors.white.withAlpha(77), 
-                width: 2,
-              ),
-            ),
-          ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
+  Widget _buildProfessionalBadge(String hours, String label, bool isUnlocked) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 130,
+          height: 160,
+          child: Stack(
+            alignment: Alignment.topCenter,
             children: [
-              Text(
-                '5',
-                style: TextStyle(
-                  fontSize: size * 0.35,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  height: 1.0,
+              Positioned(
+                top: 0,
+                child: CustomPaint(
+                  size: const Size(60, 60),
+                  painter: ProfessionalRibbonPainter(
+                    color: isUnlocked
+                        ? BadgesScreen.accentColor
+                        : BadgesScreen.lockedColor,
+                  ),
                 ),
               ),
-              Text(
-                'ساعات',
-                style: TextStyle(
-                  fontSize: size * 0.08,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+              Positioned(
+                top: 20,
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: isUnlocked
+                          ? [const Color(0xFF5A82B4), const Color(0xFF4A6FA5)]
+                          : [const Color(0xFFC8D0D8), const Color(0xFFB0BCC5)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    border: Border.all(
+                      color: isUnlocked
+                          ? const Color(0xFF7E9DCA)
+                          : const Color(0xFFD4DDE3),
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Container(
+                      width: 88,
+                      height: 88,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                          width: 2,
+                        ),
+                      ),
+                      child: isUnlocked
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  hours,
+                                  style: const TextStyle(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    height: 1.1,
+                                  ),
+                                ),
+                                Text(
+                                  label,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white.withOpacity(0.9),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Icon(
+                              Icons.lock_outline,
+                              color: Colors.white.withOpacity(0.8),
+                              size: 40,
+                            ),
+                    ),
+                  ),
                 ),
-                textDirection: TextDirection.rtl,
               ),
             ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
-class SunburstPainter extends CustomPainter {
+class ProfessionalRibbonPainter extends CustomPainter {
+  final Color color;
+  ProfessionalRibbonPainter({required this.color});
+
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..shader = const LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Color(0xFFFF9800),
-          Color(0xFFE65100),
-        ],
-      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
-      ..style = PaintingStyle.fill;
+    final paint = Paint()..color = color;
+    final shadowPaint = Paint()..color = Colors.black.withOpacity(0.2);
 
-    final double centerX = size.width / 2;
-    final double centerY = size.height / 2;
-    final double outerRadius = size.width / 2;
-    final double innerRadius = outerRadius * 0.88;
-    const int points = 12;
+    final path = Path();
+    double w = size.width;
+    double h = size.height;
 
-    final Path path = Path();
-    for (int i = 0; i < points * 2; i++) {
-      final double radius = i.isEven ? outerRadius : innerRadius;
-      final double angle = (i * math.pi) / points - (math.pi / 2);
-      final double x = centerX + radius * math.cos(angle);
-      final double y = centerY + radius * math.sin(angle);
-      if (i == 0) {
-        path.moveTo(x, y);
-      } else {
-        path.lineTo(x, y);
-      }
-    }
+    path.moveTo(w * 0.1, 0);
+    path.lineTo(w * 0.5, h * 0.3);
+    path.lineTo(w * 0.5, h);
+    path.lineTo(0, h * 0.7);
     path.close();
-    canvas.drawPath(path, paint);
 
-    final Paint highlightPaint = Paint()
-      ..color = Colors.white.withAlpha(51)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-    canvas.drawPath(path, highlightPaint);
+    path.moveTo(w * 0.9, 0);
+    path.lineTo(w * 0.5, h * 0.3);
+    path.lineTo(w * 0.5, h);
+    path.lineTo(w, h * 0.7);
+    path.close();
+
+    canvas.drawPath(path.shift(const Offset(0, 2)), shadowPaint);
+    canvas.drawPath(path, paint);
   }
+
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class ConfettiBackground extends StatelessWidget {
-  const ConfettiBackground({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final random = math.Random();
-    return Stack(
-      children: List.generate(40, (index) {
-        final color = [
-          const Color(0xFFFFD700),
-          const Color(0xFFFF4500),
-          const Color(0xFF1E90FF),
-          const Color(0xFF32CD32),
-          const Color(0xFF9370DB),
-        ][random.nextInt(5)];
-        
-        return Positioned(
-          left: random.nextDouble() * MediaQuery.of(context).size.width,
-          top: random.nextDouble() * MediaQuery.of(context).size.height,
-          child: Transform.rotate(
-            angle: random.nextDouble() * 2 * math.pi,
-            child: Container(
-              width: random.nextDouble() * 8 + 4,
-              height: random.nextDouble() * 8 + 4,
-              decoration: BoxDecoration(
-                color: color.withAlpha(153), 
-                shape: random.nextBool() ? BoxShape.circle : BoxShape.rectangle,
-              ),
-            ),
-          ),
-        );
-      }),
-    );
-  }
 }
