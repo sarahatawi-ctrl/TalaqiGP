@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:talaqi_v01/reviewConsis/SignUp.dart';
+import 'SignUp.dart';
 import '../firebase_options.dart';
+import 'admin.dart';
+import 'home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,58 +15,73 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: BlocProvider(
-        create: (_) => RegisterCubit(),
-        child: const RegisterScreen(),
+        create: (_) => LoginCubit(),
+        child: const LoginScreen(),
       ),
     );
   }
 }
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
-  final email = TextEditingController();
-  final pass = TextEditingController();
-  final confirmPass = TextEditingController();
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6F3),
       body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: BlocConsumer<RegisterCubit, RegisterState>(
+        padding: const EdgeInsets.all(20.0),
+        child: BlocConsumer<LoginCubit, LoginState>(
           listener: (context, state) {
-            if (state is RegisterSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("تم إنشاء الحساب بنجاح"),
-                  backgroundColor: Colors.green,
-                ),
-              );
-            } else if (state is RegisterFailure) {
+            if (state is LoginSuccess) {
+
+              final email = emailController.text.trim();
+
+              if (email == "admin-talaqi@gmail.com") {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const TalaqiAdmin(),
+                  ),
+                );
+              } else {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const HomePage(),
+                  ),
+                );
+              }
+
+            } else if (state is LoginFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),
-                  backgroundColor: Color.fromARGB(255, 212, 41, 29),
+                  backgroundColor: const Color.fromARGB(255, 212, 41, 29),
                 ),
               );
             }
           },
-          builder: (_, state) {
+          builder: (context, state) {
             return Center(
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+
                     const Text(
                       'تلاق',
                       style: TextStyle(
@@ -75,6 +92,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
 
                     const SizedBox(height: 6),
+
                     const Text(
                       'حيث تلتقي المهارات',
                       style: TextStyle(fontSize: 16, color: Colors.grey),
@@ -97,9 +115,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       child: Column(
                         children: [
-                        //TF of email
+
                           TextField(
-                            controller: email,
+                            controller: emailController,
                             decoration: InputDecoration(
                               hintText: 'البريد الإلكتروني',
                               filled: true,
@@ -118,7 +136,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           const SizedBox(height: 12),
 
                           TextField(
-                            controller: pass,
+                            controller: passwordController,
                             obscureText: true,
                             decoration: InputDecoration(
                               hintText: 'كلمة المرور',
@@ -135,30 +153,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
 
-                          const SizedBox(height: 12),
-
-                          TextField(
-                            controller: confirmPass,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              hintText: 'تأكيد كلمة المرور',
-                              filled: true,
-                              fillColor: const Color(0xFFF7F6F3),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 16,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                borderSide: BorderSide.none,
-                              ),
-                            ),
-                          ),
-
                           const SizedBox(height: 20),
 
-                          //Button
-                          state is RegisterLoading
+                          state is LoginLoading
                               ? const CircularProgressIndicator()
                               : SizedBox(
                                   width: double.infinity,
@@ -171,41 +168,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                     ),
                                     onPressed: () {
-                                      if (email.text.isEmpty ||
-                                          pass.text.isEmpty ||
-                                          confirmPass.text.isEmpty) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
+                                      final email = emailController.text.trim();
+                                      final password =
+                                          passwordController.text.trim();
+
+                                      if (email.isEmpty || password.isEmpty) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           const SnackBar(
                                             content: Text(
-                                              "الرجاء ملء جميع الحقول",
-                                            ),backgroundColor: Color.fromARGB(255, 212, 41, 29),
+                                              "الرجاء إدخال البريد الإلكتروني وكلمة المرور",
+                                            ),
+                                            backgroundColor: Color.fromARGB(
+                                                255, 212, 41, 29),
                                           ),
                                         );
                                         return;
                                       }
 
-                                      if (pass.text != confirmPass.text) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              "كلمة المرور وتأكيدها غير متطابقين",
-                                            ),backgroundColor: Color.fromARGB(255, 212, 41, 29),
-                                          ),
-                                        );
-                                        return;
-                                      }
-
-                                      context.read<RegisterCubit>().register(
-                                        email.text.trim(),
-                                        pass.text.trim(),
-                                      );
+                                      context
+                                          .read<LoginCubit>()
+                                          .login(email, password);
                                     },
                                     child: const Text(
-                                      "إنشاء الحساب",
+                                      "تسجيل الدخول",
                                       style: TextStyle(
                                         fontSize: 16,
                                         color: Colors.white,
@@ -213,23 +199,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ),
                                   ),
                                 ),
+
                           const SizedBox(height: 16),
-                          
-                          //TextButton to navigate 
+
                           TextButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => BlocProvider(
-                                    create: (_) => LoginCubit(),
-                                    child: const LoginScreen(),
+                                    create: (_) => RegisterCubit(),
+                                    child: const RegisterScreen(),
                                   ),
                                 ),
                               );
                             },
                             child: const Text(
-                              'لديك حساب؟ سجل',
+                              'ليس لديك حساب؟ انشئ الآن',
                               style: TextStyle(
                                 color: Color(0xFF2E4365),
                                 fontSize: 14,
@@ -250,45 +236,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 }
 
-//Cubit
-class RegisterCubit extends Cubit<RegisterState> {
-  RegisterCubit() : super(RegisterInitial());
+class LoginCubit extends Cubit<LoginState> {
+  LoginCubit() : super(LoginInitial());
 
-  Future<void> register(String email, String password) async {
-    emit(RegisterLoading());
+  Future<void> login(String email, String password) async {
+    emit(LoginLoading());
+
     try {
-      UserCredential user = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
-
-      emit(
-        user.user != null
-            ? RegisterSuccess()
-            : RegisterFailure("حدث خطأ أثناء إنشاء الحساب"),
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
       );
-    } on FirebaseAuthException catch (e) {
-      String msg = "تأكد من البريد الإلكتروني وكلمة المرور";
-      if (e.code == 'email-already-in-use') {
-        msg = "هذا البريد الإلكتروني مستخدم مسبقاً";
-      }
-      if (e.code == 'invalid-email') msg = "البريد الإلكتروني غير صالح";
-      if (e.code == 'weak-password') msg = "كلمة المرور ضعيفة جداً";
-      emit(RegisterFailure(msg));
-    } catch (_) {
-      emit(RegisterFailure("حدث خطأ غير متوقع"));
+      emit(LoginSuccess());
+    } on FirebaseAuthException {
+      emit(LoginFailure("تأكد من البريد الإلكتروني وكلمة المرور"));
     }
   }
 }
 
-//States
-abstract class RegisterState {}
+abstract class LoginState {}
 
-class RegisterInitial extends RegisterState {}
+class LoginInitial extends LoginState {}
 
-class RegisterLoading extends RegisterState {}
+class LoginLoading extends LoginState {}
 
-class RegisterSuccess extends RegisterState {}
+class LoginSuccess extends LoginState {}
 
-class RegisterFailure extends RegisterState {
+class LoginFailure extends LoginState {
   final String message;
-  RegisterFailure(this.message);
+  LoginFailure(this.message);
 }
