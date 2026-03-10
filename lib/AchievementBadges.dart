@@ -168,7 +168,7 @@ class BadgeWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '5',
+                        '25',
                         style: TextStyle(
                           fontSize: size * 0.22,
                           fontWeight: FontWeight.bold,
@@ -177,7 +177,7 @@ class BadgeWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'ساعات',
+                        'ساعة',
                         style: TextStyle(
                           fontSize: size * 0.07,
                           fontWeight: FontWeight.bold,
