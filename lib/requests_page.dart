@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 
+void main() {
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: RequestsPage(),
+  ));
+}
+
 class RequestsPage extends StatefulWidget {
   const RequestsPage({super.key});
 
@@ -20,10 +27,9 @@ class _RequestsPageState extends State<RequestsPage> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: primaryColor),
-            onPressed: () => Navigator.pop(context),
-          ),
+          centerTitle: true,
+          
+          automaticallyImplyLeading: false, 
           title: const Text(
             'الطلبات',
             style: TextStyle(
@@ -32,7 +38,14 @@ class _RequestsPageState extends State<RequestsPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          centerTitle: true,
+         
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.arrow_forward_ios, color: primaryColor, size: 20),
+              onPressed: () => Navigator.pop(context),
+            ),
+            const SizedBox(width: 10), 
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
