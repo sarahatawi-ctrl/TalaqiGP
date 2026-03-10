@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
 class BadgesScreen extends StatelessWidget {
   const BadgesScreen({Key? key}) : super(key: key);
@@ -13,53 +14,58 @@ class BadgesScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: backgroundColor,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 10.0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: textColor,
-                      size: 24,
-                    ),
-                    onPressed: () => Navigator.pop(context),
+            const ConfettiBackground(),
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 10.0,
                   ),
-                  const Text(
-                    'الأوسمة',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: textColor,
+                          size: 24,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      const Text(
+                        'الأوسمة',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
+                        ),
+                      ),
+                      const SizedBox(width: 48), 
+                    ],
                   ),
-                  const SizedBox(width: 48), 
-                ],
-              ),
-            ),
-            
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 3,
-                padding: const EdgeInsets.all(16),
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 0.65, 
-                children: [
-                  _buildProfessionalBadge('5', 'ساعات', true),
-                  _buildProfessionalBadge('10', 'ساعات', true),
-                  _buildProfessionalBadge('25', 'ساعة', true),
-                  _buildProfessionalBadge('50', 'ساعة', false),
-                  _buildProfessionalBadge('100', 'ساعة', false),
-                  _buildProfessionalBadge('200', 'ساعة', false),
-                ],
-              ),
+                ),
+                
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: 3,
+                    padding: const EdgeInsets.all(16),
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 0.65, 
+                    children: [
+                      _buildProfessionalBadge('5', 'ساعات', true),
+                      _buildProfessionalBadge('10', 'ساعات', true),
+                      _buildProfessionalBadge('25', 'ساعة', true),
+                      _buildProfessionalBadge('50', 'ساعة', false),
+                      _buildProfessionalBadge('100', 'ساعة', false),
+                      _buildProfessionalBadge('200', 'ساعة', false),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -198,4 +204,42 @@ class ProfessionalRibbonPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class ConfettiBackground extends StatelessWidget {
+  const ConfettiBackground({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final random = math.Random();
+    return Stack(
+      children: List.generate(40, (index) {
+        final color = [
+          const Color(0xFFFFD700),
+          const Color(0xFFFF4500),
+          const Color(0xFF1E90FF),
+          const Color(0xFF32CD32),
+          const Color(0xFF9370DB),
+        ][random.nextInt(5)];
+
+        return Positioned(
+          left: random.nextDouble() * MediaQuery.of(context).size.width,
+          top: random.nextDouble() * MediaQuery.of(context).size.height,
+          child: Transform.rotate(
+            angle: random.nextDouble() * 2 * math.pi,
+            child: Container(
+              width: random.nextDouble() * 8 + 4,
+              height: random.nextDouble() * 8 + 4,
+              decoration: BoxDecoration(
+                color: color.withAlpha(153),
+                shape: random.nextBool()
+                    ? BoxShape.circle
+                    : BoxShape.rectangle,
+              ),
+            ),
+          ),
+        );
+      }),
+    );
+  }
 }
