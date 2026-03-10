@@ -1,23 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:share_plus/share_plus.dart';
-import 'home.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-const MyApp({super.key});
-
-@override
-Widget build(BuildContext context) {
-  return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: AchievementBadges(),
-    );
-}
-}
+import 'HomePage.dart';
 
 class AchievementBadges extends StatelessWidget {
   const AchievementBadges({super.key});
@@ -50,7 +34,7 @@ class AchievementBadges extends StatelessWidget {
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const home()),
+                                  builder: (context) => const HomePage()),
                               (route) => false,
                             );
                           },
