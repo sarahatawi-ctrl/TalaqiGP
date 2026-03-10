@@ -33,16 +33,21 @@ class _ChatbotViewState extends State<ChatbotView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: const Text(
           'مساعدك الذكي نبراس ',
           style: TextStyle(
-            color: Colors.white, 
-            fontWeight: FontWeight.bold, 
-            fontSize: 22, 
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
           ),
         ),
         backgroundColor: const Color(0xFF2E4365),
         elevation: 0,
+        centerTitle: true,
       ),
       extendBodyBehindAppBar: true,
       body: Container(
