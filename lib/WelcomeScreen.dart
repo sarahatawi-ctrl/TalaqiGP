@@ -3,7 +3,6 @@ import 'ChatbotView.dart';
 
 class AIWelcomeScreen extends StatelessWidget {
   final VoidCallback? onContinue;
-
   const AIWelcomeScreen({super.key, this.onContinue});
 
   @override
