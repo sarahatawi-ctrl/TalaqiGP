@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class BadgesScreen extends StatelessWidget {
   const BadgesScreen({Key? key}) : super(key: key);
-
   static const Color primaryColor = Color(0xFF4A6FA5);
   static const Color accentColor = Color(0xFFD9534F);
   static const Color backgroundColor = Color(0xFFF7F6F3);
