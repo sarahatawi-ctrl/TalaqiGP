@@ -97,8 +97,8 @@ class AdminReportsPage extends StatelessWidget {
               children: [
                 Text(
                   item["name"],
-                  style:
-                      const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -111,7 +111,8 @@ class AdminReportsPage extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.chevron_left, color: primary),
+            icon: const Icon(Icons.arrow_back_ios_new_outlined,
+                color: primary, size: 18),
             onPressed: () {
               Navigator.push(
                 context,
@@ -203,8 +204,12 @@ class ReportDetailsPage extends StatelessWidget {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: primary,
+          centerTitle: true,
           leading: IconButton(
-            icon: const Icon(Icons.chevron_right, color: Colors.white),
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.white,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
           title: const Text(
@@ -225,8 +230,8 @@ class ReportDetailsPage extends StatelessWidget {
               Text(
                 data["name"],
                 textAlign: TextAlign.center,
-                style:
-                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 5),
               Text(
