@@ -47,7 +47,8 @@ class _ReportPageState extends State<ReportPage> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.check_circle, size: 80, color: Color(0xFF2E4365)),
+           
+            const Icon(Icons.check_circle_outline, size: 80, color: Color(0xFF2E4365)),
             const SizedBox(height: 20),
             const Text(
               "تم إرسال بلاغك بنجاح",
@@ -71,13 +72,11 @@ class _ReportPageState extends State<ReportPage> {
 
   @override
   Widget build(BuildContext context) {
-    
     const Color primaryNavy = Color(0xFF2E4365); 
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-      
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -85,7 +84,6 @@ class _ReportPageState extends State<ReportPage> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-           
             icon: const Icon(Icons.arrow_forward_ios, color: primaryNavy, size: 22),
             onPressed: () => Navigator.pop(context),
           ),
