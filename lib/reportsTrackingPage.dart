@@ -37,22 +37,38 @@ class ReportsTrackingPage extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
+
             _buildReportCard(
-              'بلاغ  محتوى غير لائق',
+              'بلاغ محتوى غير لائق',
               '1 مارس 2026',
               'قيد المراجعة',
               Colors.orange,
               Icons.hourglass_empty,
             ),
+
+            _buildReportCard(
+              'بلاغ سلوك مسيء أو تنمر',
+              '27 فبراير 2026',
+              'إغلاق الطلب',
+              Colors.green,
+              Icons.check_circle_outline,
+            ),
+
           ],
         ),
       ),
     );
   }
 
-  Widget _buildReportCard(String title, String date, String status, Color statusColor, IconData icon) {
+  Widget _buildReportCard(
+      String title,
+      String date,
+      String status,
+      Color statusColor,
+      IconData icon,
+      ) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 15), 
+      margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -75,7 +91,9 @@ class ReportsTrackingPage extends StatelessWidget {
             ),
             child: Icon(icon, color: statusColor, size: 24),
           ),
+
           const SizedBox(width: 15),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,6 +116,7 @@ class ReportsTrackingPage extends StatelessWidget {
               ],
             ),
           ),
+
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
