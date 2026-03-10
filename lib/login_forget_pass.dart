@@ -49,7 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
           listener: (context, state) {
             if (state is LoginSuccess) {
               final email = emailController.text.trim();
-
               if (email == "admin-talaqi@gmail.com") {
                 Navigator.pushReplacement(
                   context,
@@ -61,7 +60,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   MaterialPageRoute(builder: (_) => const HomePage()),
                 );
               }
-
             } else if (state is LoginFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -280,90 +278,100 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F6F3),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFF2E4365)),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: BlocConsumer<ResetPasswordCubit, ResetPasswordState>(
-          listener: (context, state) {
-            if (state is ResetPasswordSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني"),
-                  backgroundColor: Colors.green,
-                ),
-              );
-              Future.delayed(const Duration(seconds: 2), () {
-                Navigator.pop(context);
-              });
-            } else if (state is ResetPasswordFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: const Color.fromARGB(255, 212, 41, 29),
-                ),
-              );
-            }
-          },
-          builder: (context, state) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextField(
-                    controller: emailController,
-                    decoration: InputDecoration(
-                      hintText: 'البريد الإلكتروني',
-                      filled: true,
-                      fillColor: const Color(0xFFF7F6F3),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide.none,
+    return Directionality(
+      textDirection: TextDirection.rtl, 
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF7F6F3),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new), 
+            color: const Color(0xFF2E4365),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: BlocConsumer<ResetPasswordCubit, ResetPasswordState>(
+            listener: (context, state) {
+              if (state is ResetPasswordSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني"),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+                Future.delayed(const Duration(seconds: 2), () {
+                  Navigator.pop(context);
+                });
+              } else if (state is ResetPasswordFailure) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: const Color.fromARGB(255, 212, 41, 29),
+                  ),
+                );
+              }
+            },
+            builder: (context, state) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextField(
+                      controller: emailController,
+                      textAlign: TextAlign.right, 
+                      decoration: InputDecoration(
+                        hintText: 'البريد الإلكتروني',
+                        filled: true,
+                        fillColor: const Color(0xFFF7F6F3),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  state is ResetPasswordLoading
-                      ? const CircularProgressIndicator()
-                      : SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2E4365),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
+                    const SizedBox(height: 20),
+                    state is ResetPasswordLoading
+                        ? const CircularProgressIndicator()
+                        : SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF2E4365),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              onPressed: () {
+                                final email = emailController.text.trim();
+                                if (email.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("الرجاء إدخال البريد الإلكتروني"),
+                                      backgroundColor: Color.fromARGB(255, 212, 41, 29),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                context.read<ResetPasswordCubit>().resetPassword(email);
+                              },
+                              child: const Text(
+                                "إرسال رابط إعادة التعيين",
+                                style: TextStyle(fontSize: 16, color: Colors.white),
                               ),
                             ),
-                            onPressed: () {
-                              final email = emailController.text.trim();
-                              if (email.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("الرجاء إدخال البريد الإلكتروني"),
-                                    backgroundColor: Color.fromARGB(255, 212, 41, 29),
-                                  ),
-                                );
-                                return;
-                              }
-                              context.read<ResetPasswordCubit>().resetPassword(email);
-                            },
-                            child: const Text(
-                              "إرسال رابط إعادة التعيين",
-                              style: TextStyle(fontSize: 16, color: Colors.white),
-                            ),
                           ),
-                        ),
-                ],
-              ),
-            );
-          },
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
