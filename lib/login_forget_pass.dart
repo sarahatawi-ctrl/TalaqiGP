@@ -103,7 +103,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: Column(
                         children: [
-                          // Email
                           TextField(
                             controller: emailController,
                             decoration: InputDecoration(
@@ -121,7 +120,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          // Password
                           TextField(
                             controller: passwordController,
                             obscureText: true,
@@ -140,7 +138,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          // Forgot password
                           Align(
                             alignment: Alignment.centerRight,
                             child: TextButton(
@@ -165,7 +162,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          // Login Button
                           state is LoginLoading
                               ? const CircularProgressIndicator()
                               : SizedBox(
@@ -206,7 +202,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                           const SizedBox(height: 16),
-                          // Navigate to SignUp
                           TextButton(
                             onPressed: () {
                               Navigator.push(
@@ -241,7 +236,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-// Login Cubit
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(LoginInitial());
 
@@ -256,7 +250,6 @@ class LoginCubit extends Cubit<LoginState> {
   }
 }
 
-// Login States
 abstract class LoginState {}
 class LoginInitial extends LoginState {}
 class LoginLoading extends LoginState {}
@@ -266,9 +259,9 @@ class LoginFailure extends LoginState {
   LoginFailure(this.message);
 }
 
-// Reset Password Screen & Cubit
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
+
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
@@ -279,14 +272,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl, 
+      textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: const Color(0xFFF7F6F3),
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new), 
+            icon: const Icon(Icons.arrow_back_ios_new),
             color: const Color(0xFF2E4365),
             onPressed: () {
               Navigator.pop(context);
@@ -318,56 +311,89 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             },
             builder: (context, state) {
               return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextField(
-                      controller: emailController,
-                      textAlign: TextAlign.right, 
-                      decoration: InputDecoration(
-                        hintText: 'البريد الإلكتروني',
-                        filled: true,
-                        fillColor: const Color(0xFFF7F6F3),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const Text(
+                        'تلاق',
+                        style: TextStyle(
+                          fontSize: 64,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2E4365),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    state is ResetPasswordLoading
-                        ? const CircularProgressIndicator()
-                        : SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2E4365),
-                                shape: RoundedRectangleBorder(
+                      const SizedBox(height: 6),
+                      const Text(
+                        'استعادة كلمة المرور',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                      const SizedBox(height: 40),
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 10,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            TextField(
+                              controller: emailController,
+                              textAlign: TextAlign.right,
+                              decoration: InputDecoration(
+                                hintText: 'البريد الإلكتروني',
+                                filled: true,
+                                fillColor: const Color(0xFFF7F6F3),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                                border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(30),
+                                  borderSide: BorderSide.none,
                                 ),
                               ),
-                              onPressed: () {
-                                final email = emailController.text.trim();
-                                if (email.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("الرجاء إدخال البريد الإلكتروني"),
-                                      backgroundColor: Color.fromARGB(255, 212, 41, 29),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                context.read<ResetPasswordCubit>().resetPassword(email);
-                              },
-                              child: const Text(
-                                "إرسال رابط إعادة التعيين",
-                                style: TextStyle(fontSize: 16, color: Colors.white),
-                              ),
                             ),
-                          ),
-                  ],
+                            const SizedBox(height: 20),
+                            state is ResetPasswordLoading
+                                ? const CircularProgressIndicator()
+                                : SizedBox(
+                                    width: double.infinity,
+                                    height: 50,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(0xFF2E4365),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(30),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        final email = emailController.text.trim();
+                                        if (email.isEmpty) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text("الرجاء إدخال البريد الإلكتروني"),
+                                              backgroundColor: Color.fromARGB(255, 212, 41, 29),
+                                            ),
+                                          );
+                                          return;
+                                        }
+                                        context.read<ResetPasswordCubit>().resetPassword(email);
+                                      },
+                                      child: const Text(
+                                        "إرسال رابط إعادة التعيين",
+                                        style: TextStyle(fontSize: 16, color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
@@ -378,9 +404,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 }
 
-// Reset Password Cubit & States
 class ResetPasswordCubit extends Cubit<ResetPasswordState> {
   ResetPasswordCubit() : super(ResetPasswordInitial());
+
   Future<void> resetPassword(String email) async {
     emit(ResetPasswordLoading());
     try {
