@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'AIWelcomeScreen.dart'; 
-import 'LoginScreen.dart';
+import 'WelcomeScreen.dart'; 
+import 'login_forget_pass.dart';
 import 'Leaderboard.dart';
-import 'HomePage.dart';
+import 'home.dart';
 import 'allRequests.dart';
+import 'profile.dart'; // استيراد الملف الشخصي
+import 'reportsTrackingPage.dart'; // استيراد متابعة البلاغات
 
 class Setting extends StatefulWidget {
   const Setting({super.key});
@@ -142,7 +144,10 @@ class SettingsPage extends StatelessWidget {
               decoration: BoxDecoration(color: sectionBg, borderRadius: BorderRadius.circular(15)),
               child: Column(
                 children: [
-                  buildSettingsItem(Icons.person_outline, 'الملف الشخصي', isDarkMode, primaryNavy, () {}),
+                  // أضفت الربط هنا للملف الشخصي
+                  buildSettingsItem(Icons.person_outline, 'الملف الشخصي', isDarkMode, primaryNavy, () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
+                  }),
                   buildSettingsItem(Icons.lightbulb_outline, 'مساعدك في التعلم', isDarkMode, primaryNavy, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const AIWelcomeScreen()));
                   }),
@@ -172,7 +177,10 @@ class SettingsPage extends StatelessWidget {
                 children: [
                  
                   buildSettingsItem(Icons.help_outline, 'الأسئلة الشائعة', isDarkMode, primaryNavy, () => _showFAQs(context)),
-                  buildSettingsItem(Icons.assignment_outlined, 'متابعة البلاغات', isDarkMode, primaryNavy, () {}),
+                  // أضفت الربط هنا لمتابعة البلاغات
+                  buildSettingsItem(Icons.assignment_outlined, 'متابعة البلاغات', isDarkMode, primaryNavy, () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ReportsTrackingPage()));
+                  }),
                   buildSettingsItem(Icons.logout, 'تسجيل الخروج', isDarkMode, primaryNavy, onLogout, isLast: true),
                 ],
               ),
@@ -189,6 +197,7 @@ class SettingsPage extends StatelessWidget {
           if (index == 0) Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
           if (index == 1) Navigator.push(context, MaterialPageRoute(builder: (context) => const Leaderboard()));
           if (index == 2) Navigator.push(context, MaterialPageRoute(builder: (context) => const allRequests()));
+          if (index == 3) Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage())); // أضفت الربط هنا أيضاً للملف الشخصي
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
