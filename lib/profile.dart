@@ -1,24 +1,11 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const TalaaqApp());
-}
-
-class TalaaqApp extends StatelessWidget {
-  const TalaaqApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      locale: const Locale('ar', 'SA'),
-      home: const Directionality(
-        textDirection: TextDirection.rtl,
-        child: ProfilePage(),
-      ),
-    );
-  }
-}
+import 'editProfile.dart';
+import 'allRequests.dart';
+import 'reportPage.dart';
+import 'home.dart';
+import 'Leaderboard.dart';
+import 'Setting.dart';
+import 'chat.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -41,6 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
               alignment: Alignment.center,
               clipBehavior: Clip.none,
               children: [
+                // الهيدر مع أيقونات التحكم
                 ClipPath(
                   clipper: HeaderClipper(),
                   child: Container(
@@ -51,12 +39,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // أيقونة الاستفهام (ربطتها بصفحة البلاغات)
                         IconButton(
                           icon: const Icon(Icons.report_gmailerrorred_outlined, color: Colors.white, size: 28),
                           onPressed: () {
-                            debugPrint("Reporting...");
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const ReportPage()));
                           },
                         ),
+                        // زر العودة
                         IconButton(
                           icon: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 25),
                           onPressed: () {
@@ -67,6 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                 ),
+                // صورة الملف الشخصي
                 Positioned(
                   bottom: -50,
                   child: Container(
@@ -91,13 +82,17 @@ class _ProfilePageState extends State<ProfilePage> {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: primaryNavy),
             ),
             const SizedBox(height: 20),
+            // أزرار التحكم (تعديل الملف والطلبات)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
+                  // زر تعديل الملف
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfilePage()));
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryNavy,
                         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -107,9 +102,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   const SizedBox(width: 15),
+                  // زر الطلبات
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const allRequests()));
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryNavy,
                         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -122,6 +120,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             const SizedBox(height: 30),
+            // النبذة والمهارات
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Column(
@@ -147,11 +146,18 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ),
+      // شريط التنقل السفلي المفعل
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFF1A237E),
         unselectedItemColor: Colors.grey,
         currentIndex: 1, 
+        onTap: (index) {
+          if (index == 0) Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting()));
+          if (index == 2) Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatScreen()));
+          if (index == 3) Navigator.push(context, MaterialPageRoute(builder: (context) => const Leaderboard()));
+          if (index == 4) Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
+        },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الإعدادات'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'الملف الشخصي'),
