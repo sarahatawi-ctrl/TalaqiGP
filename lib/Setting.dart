@@ -165,7 +165,7 @@ class SettingsPage extends StatelessWidget {
               child: ListTile(
                 leading: const Icon(Icons.dark_mode_outlined, color: primaryNavy),
                 title: const Text('الوضع الداكن', style: TextStyle(fontSize: 16)),
-                trailing: Switch(value: isDarkMode, onChanged: onThemeChanged, activeThumbColor: primaryNavy),
+                trailing: Switch(value: isDarkMode, onChanged: onThemeChanged, activeTrackColor: primaryNavy),
               ),
             ),
             const SizedBox(height: 30),
