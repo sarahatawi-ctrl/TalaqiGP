@@ -103,7 +103,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: Column(
                         children: [
-                          // Email
                           TextField(
                             controller: emailController,
                             decoration: InputDecoration(
@@ -121,7 +120,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          // Password
                           TextField(
                             controller: passwordController,
                             obscureText: true,
@@ -140,7 +138,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          // Forgot password
                           Align(
                             alignment: Alignment.centerRight,
                             child: TextButton(
@@ -165,7 +162,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          // Login Button
                           state is LoginLoading
                               ? const CircularProgressIndicator()
                               : SizedBox(
@@ -180,33 +176,34 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                     onPressed: () {
                                       final email = emailController.text.trim();
-                                      final password = passwordController.text.trim();
+                                      final password =
+                                          passwordController.text.trim();
 
                                       if (email.isEmpty || password.isEmpty) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           const SnackBar(
                                             content: Text(
-                                              "الرجاء إدخال البريد الإلكتروني وكلمة المرور",
-                                            ),
-                                            backgroundColor: Color.fromARGB(255, 212, 41, 29),
+                                                "الرجاء إدخال البريد الإلكتروني وكلمة المرور"),
+                                            backgroundColor: Color.fromARGB(
+                                                255, 212, 41, 29),
                                           ),
                                         );
                                         return;
                                       }
 
-                                      context.read<LoginCubit>().login(email, password);
+                                      context
+                                          .read<LoginCubit>()
+                                          .login(email, password);
                                     },
                                     child: const Text(
                                       "تسجيل الدخول",
                                       style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                      ),
+                                          fontSize: 16, color: Colors.white),
                                     ),
                                   ),
                                 ),
                           const SizedBox(height: 16),
-                          // Navigate to SignUp
                           TextButton(
                             onPressed: () {
                               Navigator.push(
@@ -248,7 +245,8 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> login(String email, String password) async {
     emit(LoginLoading());
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email, password: password);
       emit(LoginSuccess());
     } on FirebaseAuthException {
       emit(LoginFailure("تأكد من البريد الإلكتروني وكلمة المرور"));
@@ -258,17 +256,22 @@ class LoginCubit extends Cubit<LoginState> {
 
 // Login States
 abstract class LoginState {}
+
 class LoginInitial extends LoginState {}
+
 class LoginLoading extends LoginState {}
+
 class LoginSuccess extends LoginState {}
+
 class LoginFailure extends LoginState {
   final String message;
   LoginFailure(this.message);
 }
 
-// Reset Password Screen & Cubit
+// Reset Password Screen
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
+
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
@@ -279,14 +282,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl, 
+      textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: const Color(0xFFF7F6F3),
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new), 
+            icon: const Icon(Icons.arrow_back_ios_new),
             color: const Color(0xFF2E4365),
             onPressed: () {
               Navigator.pop(context);
@@ -300,7 +303,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               if (state is ResetPasswordSuccess) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني"),
+                    content: Text(
+                        "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني"),
                     backgroundColor: Colors.green,
                   ),
                 );
@@ -318,56 +322,78 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             },
             builder: (context, state) {
               return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextField(
-                      controller: emailController,
-                      textAlign: TextAlign.right, 
-                      decoration: InputDecoration(
-                        hintText: 'البريد الإلكتروني',
-                        filled: true,
-                        fillColor: const Color(0xFFF7F6F3),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none,
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        controller: emailController,
+                        textAlign: TextAlign.right,
+                        decoration: InputDecoration(
+                          hintText: 'البريد الإلكتروني',
+                          filled: true,
+                          fillColor: const Color(0xFFF7F6F3),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 16, horizontal: 16),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    state is ResetPasswordLoading
-                        ? const CircularProgressIndicator()
-                        : SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2E4365),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
+                      const SizedBox(height: 20),
+                      state is ResetPasswordLoading
+                          ? const CircularProgressIndicator()
+                          : SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF2E4365),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  final email =
+                                      emailController.text.trim();
+                                  if (email.isEmpty) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            "الرجاء إدخال البريد الإلكتروني"),
+                                        backgroundColor: Color.fromARGB(
+                                            255, 212, 41, 29),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  context
+                                      .read<ResetPasswordCubit>()
+                                      .resetPassword(email);
+                                },
+                                child: const Text(
+                                  "إرسال رابط إعادة التعيين",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
                                 ),
                               ),
-                              onPressed: () {
-                                final email = emailController.text.trim();
-                                if (email.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("الرجاء إدخال البريد الإلكتروني"),
-                                      backgroundColor: Color.fromARGB(255, 212, 41, 29),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                context.read<ResetPasswordCubit>().resetPassword(email);
-                              },
-                              child: const Text(
-                                "إرسال رابط إعادة التعيين",
-                                style: TextStyle(fontSize: 16, color: Colors.white),
-                              ),
                             ),
-                          ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
@@ -378,9 +404,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 }
 
-// Reset Password Cubit & States
+// Reset Password Cubit
 class ResetPasswordCubit extends Cubit<ResetPasswordState> {
   ResetPasswordCubit() : super(ResetPasswordInitial());
+
   Future<void> resetPassword(String email) async {
     emit(ResetPasswordLoading());
     try {
@@ -396,9 +423,13 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
 }
 
 abstract class ResetPasswordState {}
+
 class ResetPasswordInitial extends ResetPasswordState {}
+
 class ResetPasswordLoading extends ResetPasswordState {}
+
 class ResetPasswordSuccess extends ResetPasswordState {}
+
 class ResetPasswordFailure extends ResetPasswordState {
   final String message;
   ResetPasswordFailure(this.message);
