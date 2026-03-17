@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'BadgesScreen.dart';
-import 'HomePage.dart';
+import 'home.dart';
 import 'Setting.dart';
 
 class Leaderboard extends StatelessWidget {
@@ -205,3 +205,4 @@ class LeaderboardCard extends StatelessWidget {
     );
   }
 }
+
