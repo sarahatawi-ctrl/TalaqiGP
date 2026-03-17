@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'RequestsPage.dart';
-import 'HomePage.dart';
+import 'requests_page.dart';
+import 'home.dart';
 import 'Leaderboard.dart';
 import 'Setting.dart';
+
 
 class allRequests extends StatelessWidget {
   const allRequests({super.key});
 
+
   static const Color primaryColor = Color(0xFF2E4365);
+
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +72,7 @@ class allRequests extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => const RequestsPage()),
             );
-          }, 
+          },
           backgroundColor: primaryColor,
           label: const Text(
             'الطلبات',
@@ -101,6 +104,7 @@ class allRequests extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildSessionCard(String title, String subtitle, String imageUrl) {
     return Container(
