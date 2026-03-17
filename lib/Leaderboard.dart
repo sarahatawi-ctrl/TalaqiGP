@@ -108,7 +108,7 @@ class Leaderboard extends StatelessWidget {
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
             BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
-            BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'الدردشة'),
+            BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'المحادثة'),
             BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'الملف الشخصي'),
             BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الاعدادات'),
           ],
@@ -205,4 +205,3 @@ class LeaderboardCard extends StatelessWidget {
     );
   }
 }
-
