@@ -6,7 +6,7 @@ void main() {
 
 class TalaaqApp extends StatelessWidget {
   const TalaaqApp({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
