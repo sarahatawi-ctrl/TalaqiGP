@@ -1,28 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
-void main() {
-  runApp(const ChatApp());
-}
-
-class ChatApp extends StatelessWidget {
-  const ChatApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: const Color(0xFF2E3E5C),
-      ),
-      home: const Directionality(
-        textDirection: TextDirection.rtl,
-        child: ChatScreen(),
-      ),
-    );
-  }
-}
-
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
@@ -74,7 +52,10 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF2E4365),
         elevation: 0,
-        leading: const Icon(Icons.chevron_left, color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: Row(
           children: const [
             CircleAvatar(
@@ -163,7 +144,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.attach_file, color: Colors.grey),
-                    onPressed: _pickFile, 
+                    onPressed: _pickFile,
                   ),
                 ],
               ),
@@ -182,3 +163,4 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 }
+
