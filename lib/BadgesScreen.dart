@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'AchievementBadges.dart'; 
 
 class BadgesScreen extends StatelessWidget {
   const BadgesScreen({Key? key}) : super(key: key);
@@ -56,12 +57,12 @@ class BadgesScreen extends StatelessWidget {
                     mainAxisSpacing: 12,
                     childAspectRatio: 0.65, 
                     children: [
-                      _buildProfessionalBadge('5', 'ساعات', true),
-                      _buildProfessionalBadge('10', 'ساعات', true),
-                      _buildProfessionalBadge('25', 'ساعة', true),
-                      _buildProfessionalBadge('50', 'ساعة', false),
-                      _buildProfessionalBadge('100', 'ساعة', false),
-                      _buildProfessionalBadge('200', 'ساعة', false),
+                      _buildProfessionalBadge(context, '5', 'ساعات', true),
+                      _buildProfessionalBadge(context, '10', 'ساعات', true),
+                      _buildProfessionalBadge(context, '25', 'ساعة', true),
+                      _buildProfessionalBadge(context, '50', 'ساعة', false),
+                      _buildProfessionalBadge(context, '100', 'ساعة', false),
+                      _buildProfessionalBadge(context, '200', 'ساعة', false),
                     ],
                   ),
                 ),
@@ -73,102 +74,123 @@ class BadgesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfessionalBadge(String hours, String label, bool isUnlocked) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: 130,
-          height: 160,
-          child: Stack(
-            alignment: Alignment.topCenter,
-            children: [
-              Positioned(
-                top: 0,
-                child: CustomPaint(
-                  size: const Size(60, 60),
-                  painter: ProfessionalRibbonPainter(
-                    color: isUnlocked
-                        ? BadgesScreen.accentColor
-                        : BadgesScreen.lockedColor,
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 20,
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: isUnlocked
-                          ? [const Color(0xFF5A82B4), const Color(0xFF4A6FA5)]
-                          : [const Color(0xFFC8D0D8), const Color(0xFFB0BCC5)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    border: Border.all(
+  Widget _buildProfessionalBadge(BuildContext context, String hours, String label, bool isUnlocked) {
+    return GestureDetector(
+      onTap: () {
+        if (isUnlocked) {
+          
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AchievementBadges()),
+          );
+        } else {
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('استمر في التعلم لفتح وسام الـ $hours $label!', textAlign: TextAlign.right),
+              backgroundColor: primaryColor,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 130,
+            height: 160,
+            child: Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                Positioned(
+                  top: 0,
+                  child: CustomPaint(
+                    size: const Size(60, 60),
+                    painter: ProfessionalRibbonPainter(
                       color: isUnlocked
-                          ? const Color(0xFF7E9DCA)
-                          : const Color(0xFFD4DDE3),
-                      width: 2,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Container(
-                      width: 88,
-                      height: 88,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
-                          width: 2,
-                        ),
-                      ),
-                      child: isUnlocked
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  hours,
-                                  style: const TextStyle(
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    height: 1.1,
-                                  ),
-                                ),
-                                Text(
-                                  label,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white.withOpacity(0.9),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Icon(
-                              Icons.lock_outline,
-                              color: Colors.white.withOpacity(0.8),
-                              size: 40,
-                            ),
+                          ? BadgesScreen.accentColor
+                          : BadgesScreen.lockedColor,
                     ),
                   ),
                 ),
-              ),
-            ],
+                Positioned(
+                  top: 20,
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: isUnlocked
+                            ? [const Color(0xFF5A82B4), const Color(0xFF4A6FA5)]
+                            : [const Color(0xFFC8D0D8), const Color(0xFFB0BCC5)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: Border.all(
+                        color: isUnlocked
+                            ? const Color(0xFF7E9DCA)
+                            : const Color(0xFFD4DDE3),
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Container(
+                        width: 88,
+                        height: 88,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.2),
+                            width: 2,
+                          ),
+                        ),
+                        child: isUnlocked
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    hours,
+                                    style: const TextStyle(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      height: 1.1,
+                                    ),
+                                  ),
+                                  Text(
+                                    label,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white.withOpacity(0.9),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Icon(
+                                Icons.lock_outline,
+                                color: Colors.white.withOpacity(0.8),
+                                size: 40,
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -243,3 +265,4 @@ class ConfettiBackground extends StatelessWidget {
     );
   }
 }
+
