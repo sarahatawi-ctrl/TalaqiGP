@@ -2,51 +2,29 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: CreateSkillPage(),
-    );
-  }
-}
-
-class CreateSkillPage extends StatelessWidget {
-  const CreateSkillPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Directionality(
-      textDirection: TextDirection.rtl,
-      child: CreateSkillScreen(),
-    );
-  }
-}
 
 class CreateSkillScreen extends StatefulWidget {
   const CreateSkillScreen({super.key});
+
 
   @override
   State<CreateSkillScreen> createState() => _CreateSkillScreenState();
 }
 
+
 class _CreateSkillScreenState extends State<CreateSkillScreen> {
   List<PlatformFile> selectedFiles = [];
   String? duplicateMessage;
+
 
   Future<void> _pickFiles() async {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles(allowMultiple: true);
 
+
     if (result != null) {
       bool hasDuplicate = false;
+
 
       for (var file in result.files) {
         bool alreadyExists = selectedFiles.any(
@@ -55,6 +33,7 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
               existingFile.size == file.size,
         );
 
+
         if (!alreadyExists) {
           selectedFiles.add(file);
         } else {
@@ -62,10 +41,12 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
         }
       }
 
+
       if (hasDuplicate) {
         setState(() {
           duplicateMessage = "أحد الملفات التي اخترتها مرفوع مسبقاً";
         });
+
 
         Timer(const Duration(seconds: 2), () {
           if (mounted) {
@@ -76,15 +57,18 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
         });
       }
 
+
       setState(() {});
     }
   }
+
 
   void _removeFile(int index) {
     setState(() {
       selectedFiles.removeAt(index);
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -96,10 +80,27 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 20),
-
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF2E3E5C)),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  const Text(
+                    "إضافة مهارة",
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF2E3E5C),
+                    ),
+                  ),
+                  const SizedBox(width: 48), // Placeholder for alignment
+                ],
+              ),
+              const SizedBox(height: 6),
               const Text(
-                "إضافة مهارة",
+                "قم بإدخال تفاصيل المهارة وإرفاق الملفات الداعمة",
                 style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
@@ -115,7 +116,9 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
                 ),
               ),
 
+
               const SizedBox(height: 30),
+
 
               const Text('اسم المهارة'),
               const SizedBox(height: 8),
@@ -131,7 +134,9 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
                 ),
               ),
 
+
               const SizedBox(height: 20),
+
 
               const Text('الوصف'),
               const SizedBox(height: 8),
@@ -148,8 +153,8 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
                 ),
               ),
 
-              const SizedBox(height: 24),
 
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
@@ -164,6 +169,7 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
                   ),
                 ),
               ),
+
 
               if (duplicateMessage != null) ...[
                 const SizedBox(height: 12),
@@ -189,8 +195,8 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
                 ),
               ],
 
-              const SizedBox(height: 16),
 
+              const SizedBox(height: 16),
               if (selectedFiles.isNotEmpty)
                 Column(
                   children: List.generate(selectedFiles.length, (index) {
@@ -222,15 +228,15 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
                     );
                   }),
                 ),
-
               const SizedBox(height: 30),
+
 
               SizedBox(
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacement(
+                                        Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
@@ -252,6 +258,7 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
                 ),
               ),
 
+
               const SizedBox(height: 40),
             ],
           ),
@@ -260,6 +267,7 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
     );
   }
 }
+
 
 class SkillSuccessScreen extends StatelessWidget {
   const SkillSuccessScreen({super.key});
@@ -313,7 +321,7 @@ class SkillSuccessScreen extends StatelessWidget {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const CreateSkillPage()),
+                      builder: (context) => const CreateSkillScreen()),
                   (route) => false,
                 );
               },
