@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
+import 'Chat.dart'; // Import the ChatScreen
 
-void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: RequestsPage(),
-  ));
-}
+
+
+
 
 class RequestsPage extends StatefulWidget {
   const RequestsPage({super.key});
+
 
   @override
   State<RequestsPage> createState() => _RequestsPageState();
 }
 
+
 class _RequestsPageState extends State<RequestsPage> {
   static const Color primaryColor = Color(0xFF2E4365);
   String? status; 
+
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,6 @@ class _RequestsPageState extends State<RequestsPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-         
           actions: [
             IconButton(
               icon: const Icon(Icons.arrow_forward_ios, color: primaryColor, size: 20),
@@ -89,10 +89,15 @@ class _RequestsPageState extends State<RequestsPage> {
                           backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=redProfile' ),
                         ),
                         const SizedBox(width: 15),
-                        const Expanded(
-                          child: Text(
-                            'فجر',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatScreen()));
+                            },
+                            child: const Text(
+                              'فجر',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                            ),
                           ),
                         ),
                         if (status == null) ...[
@@ -133,3 +138,4 @@ class _RequestsPageState extends State<RequestsPage> {
     );
   }
 }
+
