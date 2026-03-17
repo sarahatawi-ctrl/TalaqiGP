@@ -2,6 +2,22 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: CreateSkillScreen(),
+    );
+  }
+}
+
 
 class CreateSkillScreen extends StatefulWidget {
   const CreateSkillScreen({super.key});
@@ -87,8 +103,10 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
                     icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF2E3E5C)),
                     onPressed: () => Navigator.pop(context),
                   ),
+                  
                   const Text(
                     "إضافة مهارة",
+                      textAlign: TextAlign.right,
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -99,14 +117,6 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
                 ],
               ),
               const SizedBox(height: 6),
-              const Text(
-                "قم بإدخال تفاصيل المهارة وإرفاق الملفات الداعمة",
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF2E3E5C),
-                ),
-              ),
               const SizedBox(height: 6),
               const Text(
                 "قم بإدخال تفاصيل المهارة وإرفاق الملفات الداعمة",
