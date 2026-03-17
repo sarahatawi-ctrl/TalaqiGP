@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'Leaderboard.dart';
 import 'Setting.dart';
+import 'CreateSkillPage.dart'; // Import the CreateSkillPage
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
+
 
 class _HomePageState extends State<HomePage> {
   final List<Map<String, String>> _allItems = [
@@ -23,8 +27,10 @@ class _HomePageState extends State<HomePage> {
     {'title': 'التصميم الجرافيكي', 'name': 'ليلى إبراهيم', 'image': 'https://i.pravatar.cc/150?u=20'},
   ];
 
+
   List<Map<String, String>> _displayedItems = [];
   final TextEditingController _searchController = TextEditingController( );
+
 
   @override
   void initState() {
@@ -33,12 +39,14 @@ class _HomePageState extends State<HomePage> {
     _searchController.addListener(_filterItems);
   }
 
+
   @override
   void dispose() {
     _searchController.removeListener(_filterItems);
     _searchController.dispose();
     super.dispose();
   }
+
 
   void _filterItems() {
     final query = _searchController.text.toLowerCase();
@@ -54,6 +62,7 @@ class _HomePageState extends State<HomePage> {
       }
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -93,12 +102,19 @@ class _HomePageState extends State<HomePage> {
                   itemCount: _displayedItems.length,
                   itemBuilder: (context, index) {
                     final item = _displayedItems[index];
-                    return _buildCard(item['title']!, item['name']!, item['image']!);
+                    return _buildCard(item['title']!, item['name']!, item['image']!); 
                   },
                 ),
               ),
             ],
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateSkillScreen()));
+          },
+          backgroundColor: const Color(0xFF2E4365),
+          child: const Icon(Icons.add, color: Colors.white, size: 30),
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
@@ -120,6 +136,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
 
   Widget _buildCard(String title, String name, String imageUrl) {
     return Container(
@@ -145,3 +162,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
