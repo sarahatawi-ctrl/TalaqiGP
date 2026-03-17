@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:share_plus/share_plus.dart';
-import 'HomePage.dart';
+import 'home.dart';
 
 class AchievementBadges extends StatelessWidget {
   const AchievementBadges({super.key});
