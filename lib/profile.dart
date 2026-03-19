@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'editProfile.dart';
+import 'EditProfilePage.dart';
 import 'allRequests.dart';
 import 'reportPage.dart';
-import 'home.dart';
+import 'HomePage.dart';
 import 'Leaderboard.dart';
 import 'Setting.dart';
-import 'chat.dart';
+import 'ChatScreen.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -39,20 +39,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // أيقونة الاستفهام (ربطتها بصفحة البلاغات)
+                        // زر العودة (تم نقله لليسار)
                         IconButton(
-                          icon: const Icon(Icons.report_gmailerrorred_outlined, color: Colors.white, size: 28),
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const ReportPage()));
-                          },
-                        ),
-                        // زر العودة
-                        IconButton(
-                          icon: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 25),
+                          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 25),
                           onPressed: () {
                             Navigator.pop(context);
                           },
                         ),
+                        // أيقونة البلاغ (تمت إزالتها)
                       ],
                     ),
                   ),
@@ -82,45 +76,25 @@ class _ProfilePageState extends State<ProfilePage> {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: primaryNavy),
             ),
             const SizedBox(height: 20),
-            // أزرار التحكم (تعديل الملف والطلبات)
+            // زر تعديل الملف (تم جعله في المنتصف وإزالة زر الطلبات)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  // زر تعديل الملف
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfilePage()));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryNavy,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                      ),
-                      child: const Text('تعديل الملف', style: TextStyle(color: Colors.white, fontSize: 16)),
-                    ),
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfilePage()));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryNavy,
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                   ),
-                  const SizedBox(width: 15),
-                  // زر الطلبات
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const allRequests()));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryNavy,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                      ),
-                      child: const Text('الطلبات', style: TextStyle(color: Colors.white, fontSize: 16)),
-                    ),
-                  ),
-                ],
+                  child: const Text('تعديل الملف', style: TextStyle(color: Colors.white, fontSize: 16)),
+                ),
               ),
             ),
             const SizedBox(height: 30),
-            // النبذة والمهارات
+            // النبذة والمهارات (تم تحديث المحتوى)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Column(
@@ -129,16 +103,18 @@ class _ProfilePageState extends State<ProfilePage> {
                   const Text('نبذة', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
                   buildStaticBox(
-                    text: "مصمم مواقع مهتم بإنشاء واجهات مستخدم جذابة وسهلة الاستخدام مهتم بتحويل الأفكار المعقدة إلى تصاميم رقمية بسيطة ومبتكرة تخدم تجربة المستخدم.",
+                    text: "مصمم واجهات مستخدم (UI/UX) شغوف بإنشاء تجارب مستخدم بديهية وجذابة. أركز على تحويل الأفكار المعقدة إلى تصاميم بسيطة وعملية تلبي احتياجات المستخدمين وأهداف العمل.",
                   ),
                   const SizedBox(height: 20),
                   const Text('المهارات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
                   buildStaticBox(text: "تصميم واجهات المستخدم (UI/UX)"),
                   const SizedBox(height: 10),
-                  buildStaticBox(text: "تطوير الويب (HTML/CSS)"),
+                  buildStaticBox(text: "تصميم تجربة المستخدم (UX Research)"),
                   const SizedBox(height: 10),
-                  buildStaticBox(text: "إدارة المشاريع البرمجية"),
+                  buildStaticBox(text: "النماذج الأولية (Prototyping)"),
+                  const SizedBox(height: 10),
+                  buildStaticBox(text: "أدوات التصميم (Figma, Sketch, Adobe XD)"),
                 ],
               ),
             ),
