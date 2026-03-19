@@ -1,171 +1,177 @@
 import 'package:flutter/material.dart';
+import 'EditProfilePage.dart';
+import 'allRequests.dart';
+import 'reportPage.dart';
+import 'HomePage.dart';
+import 'Leaderboard.dart';
+import 'Setting.dart';
+import 'ChatScreen.dart';
 
-void main() {
-  runApp(const TalaaqApp());
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class TalaaqApp extends StatelessWidget {
-  const TalaaqApp({super.key});
-  
+class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      locale: const Locale('ar', 'SA'),
-      home: const Directionality(
-        textDirection: TextDirection.rtl,
-        child: ReportPage(),
-      ),
-    );
-  }
-}
-
-class ReportPage extends StatefulWidget {
-  const ReportPage({super.key});
-
-  @override
-  State<ReportPage> createState() => _ReportPageState();
-}
-
-class _ReportPageState extends State<ReportPage> {
-  String? selectedReason;
-  final TextEditingController _detailsController = TextEditingController();
-
-  final List<String> reportReasons = [
-    "محتوى غير لائق",
-    "سلوك مسيء أو تنمر",
-    "معلومات مضللة",
-    "حساب زائف",
-    "آخر"
-  ];
-
-  void _showSuccessDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-           
-            const Icon(Icons.check_circle_outline, size: 80, color: Color(0xFF2E4365)),
-            const SizedBox(height: 20),
-            const Text(
-              "تم إرسال بلاغك بنجاح",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-            const SizedBox(height: 10),
-            const Text("شكرًا لك على مساعدتنا في الحفاظ على مجتمع تلاقِ.", textAlign: TextAlign.center),
-            const SizedBox(height: 20),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-              child: const Text("موافق", style: TextStyle(color: Color(0xFF2E4365), fontWeight: FontWeight.bold)),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    const Color primaryNavy = Color(0xFF2E4365); 
+    const Color primaryNavy = Color(0xFF344966);
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: const Text("تقديم بلاغ", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.arrow_forward_ios, color: primaryNavy, size: 22),
-            onPressed: () => Navigator.pop(context),
-          ),
-          const SizedBox(width: 10),
-        ],
-      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(25),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "ما هو سبب البلاغ؟",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryNavy),
+            Stack(
+              alignment: Alignment.center,
+              clipBehavior: Clip.none,
+              children: [
+                // الهيدر مع أيقونات التحكم
+                ClipPath(
+                  clipper: HeaderClipper(),
+                  child: Container(
+                    height: 250,
+                    color: primaryNavy,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // زر العودة (تم نقله لليسار)
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 25),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        // أيقونة البلاغ (تمت إزالتها)
+                      ],
+                    ),
+                  ),
+                ),
+                // صورة الملف الشخصي
+                Positioned(
+                  bottom: -50,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 4),
+                      boxShadow: [
+                        BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, spreadRadius: 2),
+                      ],
+                    ),
+                    child: const CircleAvatar(
+                      radius: 65,
+                      backgroundImage: NetworkImage('https://i.pravatar.cc/300?img=12'),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 15),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: selectedReason,
-                  hint: const Text("اختر سبباً"),
-                  isExpanded: true,
-                  items: reportReasons.map((String reason) {
-                    return DropdownMenuItem<String>(
-                      value: reason,
-                      child: Text(reason),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedReason = value;
-                    });
+            const SizedBox(height: 60),
+            const Text(
+              'محمد أحمد',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: primaryNavy),
+            ),
+            const SizedBox(height: 20),
+            // زر تعديل الملف (تم جعله في المنتصف وإزالة زر الطلبات)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfilePage()));
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryNavy,
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  ),
+                  child: const Text('تعديل الملف', style: TextStyle(color: Colors.white, fontSize: 16)),
                 ),
               ),
             ),
             const SizedBox(height: 30),
-            const Text(
-              "تفاصيل إضافية",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryNavy),
-            ),
-            const SizedBox(height: 15),
-            TextField(
-              controller: _detailsController,
-              maxLines: 5,
-              decoration: InputDecoration(
-                hintText: "اشرح لنا مزيداً عما حدث...",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.shade300),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: primaryNavy, width: 2),
-                ),
+            // النبذة والمهارات (تم تحديث المحتوى)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('نبذة', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+                  buildStaticBox(
+                    text: "مصمم واجهات مستخدم (UI/UX) شغوف بإنشاء تجارب مستخدم بديهية وجذابة. أركز على تحويل الأفكار المعقدة إلى تصاميم بسيطة وعملية تلبي احتياجات المستخدمين وأهداف العمل.",
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('المهارات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+                  buildStaticBox(text: "تصميم واجهات المستخدم (UI/UX)"),
+                  const SizedBox(height: 10),
+                  buildStaticBox(text: "تصميم تجربة المستخدم (UX Research)"),
+                  const SizedBox(height: 10),
+                  buildStaticBox(text: "النماذج الأولية (Prototyping)"),
+                  const SizedBox(height: 10),
+                  buildStaticBox(text: "أدوات التصميم (Figma, Sketch, Adobe XD)"),
+                ],
               ),
             ),
-            const SizedBox(height: 40),
-            SizedBox(
-              width: double.infinity,
-              height: 55,
-              child: ElevatedButton(
-                onPressed: (selectedReason != null) ? _showSuccessDialog : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryNavy,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  disabledBackgroundColor: Colors.grey.shade300,
-                ),
-                child: const Text(
-                  "إرسال البلاغ",
-                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
+            const SizedBox(height: 30),
           ],
         ),
       ),
+      // شريط التنقل السفلي المفعل
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: const Color(0xFF1A237E),
+        unselectedItemColor: Colors.grey,
+        currentIndex: 1, 
+        onTap: (index) {
+          if (index == 0) Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting()));
+          if (index == 2) Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatScreen()));
+          if (index == 3) Navigator.push(context, MaterialPageRoute(builder: (context) => const Leaderboard()));
+          if (index == 4) Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'الإعدادات'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'الملف الشخصي'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'المحادثة'),
+          BottomNavigationBarItem(icon: Icon(Icons.star_outline), label: 'لوحة الصدارة'),
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'الرئيسية'),
+        ],
+      ),
     );
   }
+
+  Widget buildStaticBox({required String text}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: const Color(0xFFEEEEEE), width: 1.5),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 16, color: Colors.black87, height: 1.4),
+      ),
+    );
+  }
+}
+
+class HeaderClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.lineTo(0, size.height - 50);
+    path.quadraticBezierTo(size.width / 2, size.height + 50, size.width, size.height - 50);
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
