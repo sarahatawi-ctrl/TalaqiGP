@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
-import 'BadgesScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart'; 
+import 'AchievementBadges.dart';
 import 'home.dart';
 import 'Setting.dart';
+import 'UserProfile.dart';
+import 'profile.dart';
+import 'allRequests.dart';
 
 class Leaderboard extends StatelessWidget {
   const Leaderboard({super.key});
-  final List<Map<String, dynamic>> volunteers = const [
-    {'name': 'نورة', 'hours': 60, 'rank': 1, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704d', 'medal': 'gold'},
-    {'name': 'مهند', 'hours': 56, 'rank': 2, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704e', 'medal': 'silver'},
-    {'name': 'رنا', 'hours': 48, 'rank': 3, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704f', 'medal': 'bronze'},
-    {'name': 'مشعل', 'hours': 36, 'rank': 4, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704a', 'medal': 'none'},
-    {'name': 'شذا', 'hours': 36, 'rank': 5, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704b', 'medal': 'none'},
-    {'name': 'محمد', 'hours': 30, 'rank': 6, 'image': 'https://i.pravatar.cc/150?u=a042581f4e29026704c', 'medal': 'none'},
-  ];
 
   @override
-  Widget build(BuildContext context  ) {
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final String? currentUserId = FirebaseAuth.instance.currentUser?.uid; 
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF7F6F3),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(150.0),
           child: AppBar(
@@ -46,7 +46,7 @@ class Leaderboard extends StatelessWidget {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const BadgesScreen()));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const AchievementBadges()));
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -54,8 +54,8 @@ class Leaderboard extends StatelessWidget {
                                 color: Colors.white.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: Row(
-                                children: const [
+                              child: const Row(
+                                children: [
                                   Icon(Icons.military_tech, color: Colors.white, size: 20),
                                   SizedBox(width: 8),
                                   Text('الأوسمة', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -65,10 +65,10 @@ class Leaderboard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Expanded(
+                      const Expanded(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Text('لوحة الصدارة', style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
                             SizedBox(height: 4),
                             Text('متطوعين الشهر', style: TextStyle(color: Colors.white70, fontSize: 18)),
@@ -82,27 +82,70 @@ class Leaderboard extends StatelessWidget {
             ),
           ),
         ),
-        body: ListView.builder(
-          padding: const EdgeInsets.all(16.0),
-          itemCount: volunteers.length,
-          itemBuilder: (context, index) {
-            final volunteer = volunteers[index];
-            return LeaderboardCard(
-              name: volunteer['name']!,
-              hours: volunteer['hours']!,
-              rank: volunteer['rank']!,
-              imageUrl: volunteer['image']!,
-              medalType: volunteer['medal']!,
+        body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .orderBy('teachingHours', descending: true)
+              .limit(40)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator(color: Color(0xFF2E4365)));
+            }
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return const Center(child: Text("لا توجد بيانات حالياً ✨"));
+            }
+
+            var filteredDocs = snapshot.data!.docs.where((doc) {
+              var data = doc.data() as Map<String, dynamic>;
+              bool isBanned = data['isBanned'] ?? false;
+              num hours = data['teachingHours'] ?? 0;
+              return isBanned == false && hours > 0;
+            }).take(20).toList();
+
+            if (filteredDocs.isEmpty) {
+              return const Center(child: Text("لا توجد بيانات حالياً ✨"));
+            }
+
+            return ListView.builder(
+              padding: const EdgeInsets.all(16.0),
+              itemCount: filteredDocs.length,
+              itemBuilder: (context, index) {
+                var data = filteredDocs[index].data() as Map<String, dynamic>;
+                String userIdInList = filteredDocs[index].id; 
+                int rank = index + 1;
+                
+                String medal = 'none';
+                if (rank == 1) medal = 'gold';
+                else if (rank == 2) medal = 'silver';
+                else if (rank == 3) medal = 'bronze';
+
+                return LeaderboardCard(
+                  name: data['name'] ?? 'مستخدم تلاقِ',
+                  hours: (data['teachingHours'] ?? 0).toDouble(),
+                  rank: rank,
+                  imageUrl: (data['profilePic'] != null && data['profilePic'] != "") 
+                      ? data['profilePic'] 
+                      : 'https://ui-avatars.com/api/?name=${data['name'] ?? "User"}&background=random',
+                  medalType: medal,
+                  userId: userIdInList,
+                  isCurrentUser: userIdInList == currentUserId, 
+                );
+              },
             );
           },
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF1A237E),
+          selectedItemColor: isDark ? Colors.white : const Color(0xFF1A237E),
           unselectedItemColor: Colors.grey,
+          backgroundColor: Theme.of(context).cardColor,
           currentIndex: 1,
           onTap: (index) {
             if (index == 0) Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
+            if (index == 1) return; 
+            if (index == 2) Navigator.push(context, MaterialPageRoute(builder: (context) => const allRequests()));
+            if (index == 3) Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
             if (index == 4) Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting()));
           },
           items: const [
@@ -120,10 +163,12 @@ class Leaderboard extends StatelessWidget {
 
 class LeaderboardCard extends StatelessWidget {
   final String name;
-  final int hours;
+  final double hours;
   final int rank;
   final String imageUrl;
   final String medalType;
+  final String userId;
+  final bool isCurrentUser; 
 
   const LeaderboardCard({
     super.key,
@@ -132,6 +177,8 @@ class LeaderboardCard extends StatelessWidget {
     required this.rank,
     required this.imageUrl,
     required this.medalType,
+    required this.userId,
+    required this.isCurrentUser,
   });
 
   Color _getMedalColor(String type) {
@@ -143,63 +190,100 @@ class LeaderboardCard extends StatelessWidget {
     }
   }
 
-  IconData _getMedalIcon(String type) {
-    return type != 'none' ? Icons.military_tech : Icons.star_border;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     bool isTopThree = rank <= 3;
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12.0),
-      elevation: 2,
-      shadowColor: Colors.grey.withOpacity(0.2),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              alignment: Alignment.center,
-              child: Text(
-                '$rank',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: isTopThree ? const Color(0xFF2E4365) : Colors.grey.shade600,
+
+    return GestureDetector(
+      onTap: () {
+        if (isCurrentUser) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ProfilePage()),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserProfile(
+                ownerId: userId, 
+                userName: name,
+                userImage: imageUrl,
+              ),
+            ),
+          );
+        }
+      },
+      child: Card(
+        margin: const EdgeInsets.only(bottom: 12.0),
+        elevation: 2,
+        color: isCurrentUser 
+            ? (isDark ? Colors.blueGrey.withOpacity(0.3) : Colors.blue.withOpacity(0.05))
+            : Theme.of(context).cardColor, 
+        shadowColor: isDark ? Colors.black45 : Colors.grey.withOpacity(0.2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+          side: isCurrentUser 
+              ? const BorderSide(color: Color(0xFF2E4365), width: 1.5) 
+              : BorderSide.none,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                alignment: Alignment.center,
+                child: Text(
+                  '$rank',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isTopThree 
+                        ? (isDark ? Colors.white : const Color(0xFF2E4365)) 
+                        : (isDark ? Colors.white38 : Colors.grey.shade600),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 12),
-            CircleAvatar(
-              radius: 28,
-              backgroundImage: NetworkImage(imageUrl),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF333333)),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '$hours ساعة تطوعية',
-                    style: const TextStyle(fontSize: 14, color: Color(0xFF888888)),
-                  ),
-                ],
+              const SizedBox(width: 12),
+              CircleAvatar(
+                radius: 28,
+                backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+                backgroundImage: NetworkImage(imageUrl),
               ),
-            ),
-            if (isTopThree)
-              Icon(
-                _getMedalIcon(medalType),
-                color: _getMedalColor(medalType),
-                size: 30,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name, 
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold, 
+                        fontSize: 18, 
+                        color: isDark ? Colors.white : const Color(0xFF333333)
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${hours.toStringAsFixed(1)} ساعة تعليمية',
+                      style: TextStyle(
+                        fontSize: 14, 
+                        color: isDark ? Colors.white60 : const Color(0xFF888888)
+                      ),
+                    ),
+                  ],
+                ),
               ),
-          ],
+              if (isTopThree)
+                Icon(
+                  Icons.military_tech,
+                  color: _getMedalColor(medalType),
+                  size: 30,
+                ),
+            ],
+          ),
         ),
       ),
     );
