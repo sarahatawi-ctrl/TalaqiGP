@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'WelcomeScreen.dart'; 
+import 'package:provider/provider.dart'; 
+import 'provider/theme_provider.dart'; 
+import 'package:talaqi_v01/WelcomeScreen.dart';
 import 'login_forget_pass.dart';
 import 'Leaderboard.dart';
 import 'home.dart';
 import 'allRequests.dart';
-import 'profile.dart'; // استيراد الملف الشخصي
-import 'reportsTrackingPage.dart'; // استيراد متابعة البلاغات
+import 'profile.dart'; 
+import 'reportsTrackingPage.dart'; 
 
 class Setting extends StatefulWidget {
+ 
   const Setting({super.key});
 
   @override
@@ -15,52 +18,18 @@ class Setting extends StatefulWidget {
 }
 
 class _TalaaqAppState extends State<Setting> {
-  bool _isDark = false;
-  bool _isLoggedIn = true; 
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      locale: const Locale('ar', 'SA'),
-      theme: ThemeData(
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: const Color(0xFFF7F6F3),
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF121212),
-      ),
-      themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
-      home: Directionality(
-        textDirection: TextDirection.rtl,
-        child: _isLoggedIn 
-          ? SettingsPage(
-              isDarkMode: _isDark,
-              onThemeChanged: (value) => setState(() => _isDark = value),
-              onLogout: () => setState(() => _isLoggedIn = false),
-            )
-          : Scaffold(
-              backgroundColor: const Color(0xFFF7F6F3),
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("تم تسجيل الخروج بنجاح", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2E4365), 
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)), 
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12)
-                      ),
-                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen())),
-                      child: const Text("تسجيل الدخول", style: TextStyle(color: Colors.white, fontSize: 16)),
-                    )
-                  ],
-                ),
-              ),
-            ),
+   
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: SettingsPage(
+        isDarkMode: themeProvider.isDark,
+        onThemeChanged: (value) {
+          themeProvider.toggleTheme(value);
+        },
       ),
     );
   }
@@ -69,10 +38,12 @@ class _TalaaqAppState extends State<Setting> {
 class SettingsPage extends StatelessWidget {
   final bool isDarkMode;
   final ValueChanged<bool> onThemeChanged;
-  final VoidCallback onLogout;
 
-  const SettingsPage({super.key, required this.isDarkMode, required this.onThemeChanged, required this.onLogout});
-
+  const SettingsPage({
+    super.key,
+    required this.isDarkMode,
+    required this.onThemeChanged,
+  });
 
   void _showFAQs(BuildContext context) {
     showDialog(
@@ -80,7 +51,11 @@ class SettingsPage extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text('الأسئلة الشائعة', textAlign: TextAlign.center, style: TextStyle(color: Color(0xFF2E4365), fontWeight: FontWeight.bold)),
+          title: const Text(
+            'الأسئلة الشائعة', 
+            textAlign: TextAlign.center, 
+            style: TextStyle(color: Color(0xFF2E4365), fontWeight: FontWeight.bold)
+          ),
           content: SizedBox(
             width: double.maxFinite,
             child: ListView(
@@ -91,6 +66,15 @@ class SettingsPage extends StatelessWidget {
                 _buildFAQItem('هل التطبيق مجاني؟', 'نعم، تطبيق تلاق قائم على التطوع وبشكل مجاني بالكامل'),
                 const Divider(),
                 _buildFAQItem('كيف أتواصل مع شريك التعلم؟', 'بمجرد قبول الطلب، ستفتح لك نافذة المحادثة المباشرة مع الشريك'),
+              const Divider(),
+                _buildFAQItem(
+  'كيف أحمي حسابي من الحظر في تـلاق؟',
+  'يهمنا بقاؤك في مجتمعنا، وللحفاظ على مجتمعنا التعليمي نرجو منك الالتزام بالضوابط التالية لتجنب إيقاف حسابك \n\n'
+  ' القيم والمبادئ: يمنع منعاً باتاً نشر أي مهارة،أو نص يخالف الآداب الإسلامية أو القيم المجتمعية الراسخة\n'
+  ' حساب حقيقي: تأكد أن بياناتك الشخصية والمهارات التي تعرضها حقيقية؛ فالحسابات الزائفة أو المضللة تعرض صاحبها للحظر \n'
+  ' لا للتنمر: نحن مجتمع يسوده الاحترام؛ أي محاولة للتنمر، السخرية، أو الإساءة لن يتم التهاون معها\n'
+  ' الاستخدام الهادف: تـلاق منصة لتبادل المعرفة فقط، لذا يمنع استغلال الحساب في نشر الإعلانات، الروابط المشبوهة، أو أي محتوى خارج نطاق تعلم المهارات',
+),
               ],
             ),
           ),
@@ -127,10 +111,14 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: isDarkMode ? const Color(0xFF121212) : const Color(0xFFF7F6F3),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        title: Text('الإعدادات', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontWeight: FontWeight.bold)),
+        title: Text(
+          'الإعدادات', 
+          style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontWeight: FontWeight.bold)
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -144,7 +132,6 @@ class SettingsPage extends StatelessWidget {
               decoration: BoxDecoration(color: sectionBg, borderRadius: BorderRadius.circular(15)),
               child: Column(
                 children: [
-                  // أضفت الربط هنا للملف الشخصي
                   buildSettingsItem(Icons.person_outline, 'الملف الشخصي', isDarkMode, primaryNavy, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
                   }),
@@ -165,7 +152,11 @@ class SettingsPage extends StatelessWidget {
               child: ListTile(
                 leading: const Icon(Icons.dark_mode_outlined, color: primaryNavy),
                 title: const Text('الوضع الداكن', style: TextStyle(fontSize: 16)),
-                trailing: Switch(value: isDarkMode, onChanged: onThemeChanged, activeTrackColor: primaryNavy),
+                trailing: Switch(
+                  value: isDarkMode, 
+                  onChanged: onThemeChanged, 
+                  activeTrackColor: primaryNavy
+                ),
               ),
             ),
             const SizedBox(height: 30),
@@ -175,13 +166,13 @@ class SettingsPage extends StatelessWidget {
               decoration: BoxDecoration(color: sectionBg, borderRadius: BorderRadius.circular(15)),
               child: Column(
                 children: [
-                 
                   buildSettingsItem(Icons.help_outline, 'الأسئلة الشائعة', isDarkMode, primaryNavy, () => _showFAQs(context)),
-                  // أضفت الربط هنا لمتابعة البلاغات
                   buildSettingsItem(Icons.assignment_outlined, 'متابعة البلاغات', isDarkMode, primaryNavy, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const ReportsTrackingPage()));
                   }),
-                  buildSettingsItem(Icons.logout, 'تسجيل الخروج', isDarkMode, primaryNavy, onLogout, isLast: true),
+                  buildSettingsItem(Icons.logout, 'تسجيل الخروج', isDarkMode, primaryNavy, () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                  }, isLast: true),
                 ],
               ),
             ),
@@ -190,14 +181,15 @@ class SettingsPage extends StatelessWidget {
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF1A237E),
+        selectedItemColor: primaryNavy,
         unselectedItemColor: Colors.grey,
         currentIndex: 4,
         onTap: (index) {
           if (index == 0) Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
           if (index == 1) Navigator.push(context, MaterialPageRoute(builder: (context) => const Leaderboard()));
           if (index == 2) Navigator.push(context, MaterialPageRoute(builder: (context) => const allRequests()));
-          if (index == 3) Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage())); // أضفت الربط هنا أيضاً للملف الشخصي
+          if (index == 3) Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
+          if (index == 4) return;
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
@@ -210,7 +202,9 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Widget buildSettingsItem(IconData icon, String title, bool isDark, Color iconColor, VoidCallback onTap, {bool isLast = false}) {
+  Widget buildSettingsItem(
+      IconData icon, String title, bool isDark, Color iconColor, VoidCallback onTap,
+      {bool isLast = false}) {
     return Column(
       children: [
         ListTile(
@@ -219,7 +213,12 @@ class SettingsPage extends StatelessWidget {
           trailing: const Icon(Icons.arrow_back_ios, size: 16, color: Colors.black26),
           onTap: onTap,
         ),
-        if (!isLast) Divider(height: 1, indent: 50, endIndent: 20, color: isDark ? Colors.white10 : Colors.black12),
+        if (!isLast) Divider(
+            height: 1,
+            indent: 50,
+            endIndent: 20,
+            color: isDark ? Colors.white10 : Colors.black12
+        ),
       ],
     );
   }
