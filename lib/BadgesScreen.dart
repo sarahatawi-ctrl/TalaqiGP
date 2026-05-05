@@ -1,47 +1,49 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'AchievementBadges.dart'; 
 
 class BadgesScreen extends StatelessWidget {
   const BadgesScreen({Key? key}) : super(key: key);
+
   static const Color primaryColor = Color(0xFF4A6FA5);
   static const Color accentColor = Color(0xFFD9534F);
-  static const Color backgroundColor = Color(0xFFF7F6F3);
-  static const Color textColor = Color(0xFF333333);
   static const Color lockedColor = Color(0xFFB0BCC5);
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final currentUser = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Stack(
           children: [
             const ConfettiBackground(),
             Column(
               children: [
+                
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 10.0,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.arrow_back_ios,
-                          color: textColor,
+                          color: isDark ? Colors.white : Colors.black87,
                           size: 24,
                         ),
                         onPressed: () => Navigator.pop(context),
                       ),
-                      const Text(
+                      Text(
                         'الأوسمة',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: textColor,
+                          color: isDark ? Colors.white : Colors.black87,
                         ),
                       ),
                       const SizedBox(width: 48), 
@@ -49,21 +51,41 @@ class BadgesScreen extends StatelessWidget {
                   ),
                 ),
                 
+                
                 Expanded(
-                  child: GridView.count(
-                    crossAxisCount: 3,
-                    padding: const EdgeInsets.all(16),
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 0.65, 
-                    children: [
-                      _buildProfessionalBadge(context, '5', 'ساعات', true),
-                      _buildProfessionalBadge(context, '10', 'ساعات', true),
-                      _buildProfessionalBadge(context, '25', 'ساعة', true),
-                      _buildProfessionalBadge(context, '50', 'ساعة', false),
-                      _buildProfessionalBadge(context, '100', 'ساعة', false),
-                      _buildProfessionalBadge(context, '200', 'ساعة', false),
-                    ],
+                  child: StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(currentUser?.uid)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator(color: primaryColor));
+                      }
+
+                      double userHours = 0.0;
+                      if (snapshot.hasData && snapshot.data!.exists) {
+                        var data = snapshot.data!.data() as Map<String, dynamic>;
+                        
+                        userHours = (data['teachingHours'] ?? 0.0).toDouble();
+                      }
+
+                      return GridView.count(
+                        crossAxisCount: 3,
+                        padding: const EdgeInsets.all(16),
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        childAspectRatio: 0.65, 
+                        children: [
+                          _buildProfessionalBadge(context, '5', 'ساعات', userHours >= 5),
+                          _buildProfessionalBadge(context, '10', 'ساعات', userHours >= 10),
+                          _buildProfessionalBadge(context, '25', 'ساعة', userHours >= 25),
+                          _buildProfessionalBadge(context, '50', 'ساعة', userHours >= 50),
+                          _buildProfessionalBadge(context, '100', 'ساعة', userHours >= 100),
+                          _buildProfessionalBadge(context, '200', 'ساعة', userHours >= 200),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ],
@@ -75,16 +97,16 @@ class BadgesScreen extends StatelessWidget {
   }
 
   Widget _buildProfessionalBadge(BuildContext context, String hours, String label, bool isUnlocked) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: () {
         if (isUnlocked) {
-          
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AchievementBadges()),
           );
         } else {
-          
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('استمر في التعلم لفتح وسام الـ $hours $label!', textAlign: TextAlign.right),
@@ -110,8 +132,8 @@ class BadgesScreen extends StatelessWidget {
                     size: const Size(60, 60),
                     painter: ProfessionalRibbonPainter(
                       color: isUnlocked
-                          ? BadgesScreen.accentColor
-                          : BadgesScreen.lockedColor,
+                          ? accentColor
+                          : (isDark ? Colors.grey[700]! : lockedColor),
                     ),
                   ),
                 ),
@@ -125,19 +147,21 @@ class BadgesScreen extends StatelessWidget {
                       gradient: LinearGradient(
                         colors: isUnlocked
                             ? [const Color(0xFF5A82B4), const Color(0xFF4A6FA5)]
-                            : [const Color(0xFFC8D0D8), const Color(0xFFB0BCC5)],
+                            : (isDark 
+                                ? [const Color(0xFF2C2C2C), const Color(0xFF1E1E1E)] 
+                                : [const Color(0xFFC8D0D8), const Color(0xFFB0BCC5)]),
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       border: Border.all(
                         color: isUnlocked
                             ? const Color(0xFF7E9DCA)
-                            : const Color(0xFFD4DDE3),
+                            : (isDark ? Colors.white10 : const Color(0xFFD4DDE3)),
                         width: 2,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withOpacity(isDark ? 0.4 : 0.2),
                           blurRadius: 12,
                           offset: const Offset(0, 6),
                         ),
@@ -158,9 +182,9 @@ class BadgesScreen extends StatelessWidget {
                             ? Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    hours,
-                                    style: const TextStyle(
+                                   Text(
+                                     hours,
+                                     style: const TextStyle(
                                       fontSize: 32,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
@@ -179,7 +203,7 @@ class BadgesScreen extends StatelessWidget {
                               )
                             : Icon(
                                 Icons.lock_outline,
-                                color: Colors.white.withOpacity(0.8),
+                                color: isDark ? Colors.white38 : Colors.white.withOpacity(0.8),
                                 size: 40,
                               ),
                       ),
@@ -194,6 +218,7 @@ class BadgesScreen extends StatelessWidget {
     );
   }
 }
+
 
 class ProfessionalRibbonPainter extends CustomPainter {
   final Color color;
@@ -228,12 +253,15 @@ class ProfessionalRibbonPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
+
 class ConfettiBackground extends StatelessWidget {
   const ConfettiBackground({super.key});
 
   @override
   Widget build(BuildContext context) {
     final random = math.Random();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Stack(
       children: List.generate(40, (index) {
         final color = [
@@ -253,7 +281,7 @@ class ConfettiBackground extends StatelessWidget {
               width: random.nextDouble() * 8 + 4,
               height: random.nextDouble() * 8 + 4,
               decoration: BoxDecoration(
-                color: color.withAlpha(153),
+                color: color.withAlpha(isDark ? 80 : 153),
                 shape: random.nextBool()
                     ? BoxShape.circle
                     : BoxShape.rectangle,
