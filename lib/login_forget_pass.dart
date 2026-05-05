@@ -1,32 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'SignUp.dart';
-import '../firebase_options.dart';
+import 'SignUp.dart'; 
 import 'admin.dart';
 import 'home.dart';
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: BlocProvider(
-        create: (_) => LoginCubit(),
-        child: const LoginScreen(),
-      ),
-    );
-  }
-}
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -49,16 +27,40 @@ class _LoginScreenState extends State<LoginScreen> {
           listener: (context, state) {
             if (state is LoginSuccess) {
               final email = emailController.text.trim();
+              
               if (email == "admin-talaqi@gmail.com") {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (_) => const TalaqiAdmin()),
                 );
               } else {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const HomePage()),
-                );
+                final user = FirebaseAuth.instance.currentUser;
+                if (user != null) {
+                  FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(user.uid)
+                      .get()
+                      .then((userDoc) {
+                    if (userDoc.exists && userDoc.data()?['isBanned'] == true) {
+                      FirebaseAuth.instance.signOut();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("عذراً، هذا الحساب محظور لمخالفة القوانين "),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HomePage()),
+                      );
+                    }
+                  }).catchError((error) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("خطأ في التحقق من الحساب: $error")),
+                    );
+                  });
+                }
               }
             } else if (state is LoginFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -74,18 +76,19 @@ class _LoginScreenState extends State<LoginScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const Text(
-                      'تلاق',
-                      style: TextStyle(
-                        fontSize: 64,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF2E4365),
-                      ),
+                    Image.asset(
+                      'assets/logo.png',
+                      width: 360,
+                      height: 250,
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 10),
                     const Text(
                       'حيث تلتقي المهارات',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 20, 
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF2E4365),
+                      ),
                     ),
                     const SizedBox(height: 40),
                     Container(
@@ -109,10 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               hintText: 'البريد الإلكتروني',
                               filled: true,
                               fillColor: const Color(0xFFF7F6F3),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 16,
-                              ),
+                              contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide.none,
@@ -127,10 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               hintText: 'كلمة المرور',
                               filled: true,
                               fillColor: const Color(0xFFF7F6F3),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 16,
-                              ),
+                              contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide.none,
@@ -154,10 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                               child: const Text(
                                 'نسيت كلمة المرور؟',
-                                style: TextStyle(
-                                  color: Color(0xFF2E4365),
-                                  fontSize: 14,
-                                ),
+                                style: TextStyle(color: Color(0xFF2E4365), fontSize: 14),
                               ),
                             ),
                           ),
@@ -170,37 +164,23 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFF2E4365),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                                     ),
                                     onPressed: () {
                                       final email = emailController.text.trim();
-                                      final password =
-                                          passwordController.text.trim();
-
+                                      final password = passwordController.text.trim();
                                       if (email.isEmpty || password.isEmpty) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
+                                        ScaffoldMessenger.of(context).showSnackBar(
                                           const SnackBar(
-                                            content: Text(
-                                                "الرجاء إدخال البريد الإلكتروني وكلمة المرور"),
-                                            backgroundColor: Color.fromARGB(
-                                                255, 212, 41, 29),
+                                            content: Text("الرجاء إدخال البيانات"),
+                                            backgroundColor: Color.fromARGB(255, 212, 41, 29),
                                           ),
                                         );
                                         return;
                                       }
-
-                                      context
-                                          .read<LoginCubit>()
-                                          .login(email, password);
+                                      context.read<LoginCubit>().login(email, password);
                                     },
-                                    child: const Text(
-                                      "تسجيل الدخول",
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.white),
-                                    ),
+                                    child: const Text("تسجيل الدخول", style: TextStyle(fontSize: 16, color: Colors.white)),
                                   ),
                                 ),
                           const SizedBox(height: 16),
@@ -210,18 +190,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => BlocProvider(
-                                    create: (_) => RegisterCubit(),
-                                    child: const RegisterScreen(),
+                                    create: (_) => RegisterCubit(), 
+                                    child: const SignUp(), 
                                   ),
                                 ),
                               );
                             },
                             child: const Text(
                               'ليس لديك حساب؟ انشئ الآن',
-                              style: TextStyle(
-                                color: Color(0xFF2E4365),
-                                fontSize: 14,
-                              ),
+                              style: TextStyle(color: Color(0xFF2E4365), fontSize: 14),
                             ),
                           ),
                         ],
@@ -238,37 +215,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-// Login Cubit
-class LoginCubit extends Cubit<LoginState> {
-  LoginCubit() : super(LoginInitial());
-
-  Future<void> login(String email, String password) async {
-    emit(LoginLoading());
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email, password: password);
-      emit(LoginSuccess());
-    } on FirebaseAuthException {
-      emit(LoginFailure("تأكد من البريد الإلكتروني وكلمة المرور"));
-    }
-  }
-}
-
-// Login States
-abstract class LoginState {}
-
-class LoginInitial extends LoginState {}
-
-class LoginLoading extends LoginState {}
-
-class LoginSuccess extends LoginState {}
-
-class LoginFailure extends LoginState {
-  final String message;
-  LoginFailure(this.message);
-}
-
-// Reset Password Screen
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
 
@@ -291,9 +237,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new),
             color: const Color(0xFF2E4365),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(context),
           ),
         ),
         body: Padding(
@@ -302,21 +246,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             listener: (context, state) {
               if (state is ResetPasswordSuccess) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                        "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني"),
-                    backgroundColor: Colors.green,
-                  ),
+                  const SnackBar(content: Text("تم إرسال رابط استعادة كلمة المرور"), backgroundColor: Colors.green),
                 );
-                Future.delayed(const Duration(seconds: 2), () {
-                  Navigator.pop(context);
-                });
+                Future.delayed(const Duration(seconds: 2), () => Navigator.pop(context));
               } else if (state is ResetPasswordFailure) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                    backgroundColor: const Color.fromARGB(255, 212, 41, 29),
-                  ),
+                  SnackBar(content: Text(state.message), backgroundColor: Colors.red),
                 );
               }
             },
@@ -327,13 +262,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
+                    boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 4))],
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -345,12 +274,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           hintText: 'البريد الإلكتروني',
                           filled: true,
                           fillColor: const Color(0xFFF7F6F3),
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 16, horizontal: 16),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide.none,
-                          ),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -362,34 +286,22 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF2E4365),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                                 ),
                                 onPressed: () {
-                                  final email =
-                                      emailController.text.trim();
+                                  final email = emailController.text.trim();
                                   if (email.isEmpty) {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(
+                                    ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text(
-                                            "الرجاء إدخال البريد الإلكتروني"),
-                                        backgroundColor: Color.fromARGB(
-                                            255, 212, 41, 29),
+                                        content: Text(" أدخل البريد الإلكتروني "),
+                                        backgroundColor: Colors.red,
                                       ),
                                     );
                                     return;
                                   }
-                                  context
-                                      .read<ResetPasswordCubit>()
-                                      .resetPassword(email);
+                                  context.read<ResetPasswordCubit>().resetPassword(email);
                                 },
-                                child: const Text(
-                                  "إرسال رابط إعادة التعيين",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.white),
-                                ),
+                                child: const Text("إرسال رابط استعادة كلمة المرور", style: TextStyle(color: Colors.white)),
                               ),
                             ),
                     ],
@@ -404,33 +316,41 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 }
 
-// Reset Password Cubit
+class LoginCubit extends Cubit<LoginState> {
+  LoginCubit() : super(LoginInitial());
+
+  Future<void> login(String email, String password) async {
+    emit(LoginLoading());
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      emit(LoginSuccess());
+    } on FirebaseAuthException {
+      emit(LoginFailure("تأكد من البريد الإلكتروني وكلمة المرور"));
+    }
+  }
+}
+
 class ResetPasswordCubit extends Cubit<ResetPasswordState> {
   ResetPasswordCubit() : super(ResetPasswordInitial());
-
   Future<void> resetPassword(String email) async {
     emit(ResetPasswordLoading());
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
       emit(ResetPasswordSuccess());
-    } on FirebaseAuthException catch (e) {
-      String msg = "حدث خطأ أثناء إرسال البريد الإلكتروني";
-      if (e.code == 'user-not-found') msg = "البريد الإلكتروني غير مسجل";
-      if (e.code == 'invalid-email') msg = "البريد الإلكتروني غير صالح";
-      emit(ResetPasswordFailure(msg));
+    } on FirebaseAuthException {
+      emit(ResetPasswordFailure("البريد الإلكتروني غير مسجل"));
     }
   }
 }
 
+abstract class LoginState {}
+class LoginInitial extends LoginState {}
+class LoginLoading extends LoginState {}
+class LoginSuccess extends LoginState {}
+class LoginFailure extends LoginState { final String message; LoginFailure(this.message); }
+
 abstract class ResetPasswordState {}
-
 class ResetPasswordInitial extends ResetPasswordState {}
-
 class ResetPasswordLoading extends ResetPasswordState {}
-
 class ResetPasswordSuccess extends ResetPasswordState {}
-
-class ResetPasswordFailure extends ResetPasswordState {
-  final String message;
-  ResetPasswordFailure(this.message);
-}
+class ResetPasswordFailure extends ResetPasswordState { final String message; ResetPasswordFailure(this.message); }
