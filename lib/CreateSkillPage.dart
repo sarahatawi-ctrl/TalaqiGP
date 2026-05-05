@@ -1,343 +1,224 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: CreateSkillScreen(),
-    );
-  }
-}
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'home.dart';
 
 class CreateSkillScreen extends StatefulWidget {
   const CreateSkillScreen({super.key});
-
 
   @override
   State<CreateSkillScreen> createState() => _CreateSkillScreenState();
 }
 
-
 class _CreateSkillScreenState extends State<CreateSkillScreen> {
-  List<PlatformFile> selectedFiles = [];
-  String? duplicateMessage;
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  bool _isUploading = false;
 
+  Future<void> _submitSkill() async {
+    final title = _titleController.text.trim();
+    final desc = _descriptionController.text.trim();
 
-  Future<void> _pickFiles() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(allowMultiple: true);
+    if (title.isEmpty || desc.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("قم بإدخال تفاصيل المهارة")),
+      );
+      return;
+    }
 
+    setState(() => _isUploading = true);
 
-    if (result != null) {
-      bool hasDuplicate = false;
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      var userDoc = await FirebaseFirestore.instance.collection('users').doc(user?.uid).get();
+      var userData = userDoc.data() as Map<String, dynamic>;
 
+      await FirebaseFirestore.instance.collection('skills').add({
+        'title': title,
+        'description': desc,
+        'ownerId': user?.uid,
+        'ownerName': userData['name'] ?? "مستخدم تلاقِ",
+        'ownerImage': userData['profilePic'] ?? 'https://i.pravatar.cc/300?img=12',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
 
-      for (var file in result.files) {
-        bool alreadyExists = selectedFiles.any(
-          (existingFile) =>
-              existingFile.name == file.name &&
-              existingFile.size == file.size,
-        );
-
-
-        if (!alreadyExists) {
-          selectedFiles.add(file);
-        } else {
-          hasDuplicate = true;
-        }
+      if (mounted) {
+        setState(() => _isUploading = false);
+        _showSuccessDialog();
       }
-
-
-      if (hasDuplicate) {
-        setState(() {
-          duplicateMessage = "أحد الملفات التي اخترتها مرفوع مسبقاً";
-        });
-
-
-        Timer(const Duration(seconds: 2), () {
-          if (mounted) {
-            setState(() {
-              duplicateMessage = null;
-            });
-          }
-        });
-      }
-
-
-      setState(() {});
+    } catch (e) {
+      setState(() => _isUploading = false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("حدث خطأ: $e")));
     }
   }
 
+  void _showSuccessDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    const Color primaryNavy = Color(0xFF2E3E5C);
 
-  void _removeFile(int index) {
-    setState(() {
-      selectedFiles.removeAt(index);
-    });
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).cardColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 10),
+            const Icon(
+              Icons.check_circle_outline,
+              size: 80,
+              color: primaryNavy,
+            ),
+            const SizedBox(height: 25),
+            Text(
+              "تم إرسال مهاراتك ",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : primaryNavy,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              "شكرًا لك على مساهمتك في مجتمع تلاقِ.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? Colors.white70 : Colors.black54,
+              ),
+            ),
+            const SizedBox(height: 25),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                  (route) => false,
+                );
+              },
+              child: const Text(
+                "موافق",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: primaryNavy,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
-
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6F8FB),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF2E3E5C)),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  
-                  const Text(
-                    "إضافة مهارة",
-                      textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2E3E5C),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    const Color primaryNavy = Color(0xFF2E3E5C);
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back_ios, color: isDark ? Colors.white : primaryNavy),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                  ),
-                  const SizedBox(width: 48), // Placeholder for alignment
-                ],
-              ),
-              const SizedBox(height: 6),
-              const SizedBox(height: 6),
-              const Text(
-                "قم بإدخال تفاصيل المهارة وإرفاق الملفات الداعمة",
-                style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 14,
-                ),
-              ),
-
-
-              const SizedBox(height: 30),
-
-
-              const Text('اسم المهارة'),
-              const SizedBox(height: 8),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'مثال: برمجة ألعاب',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-
-
-              const SizedBox(height: 20),
-
-
-              const Text('الوصف'),
-              const SizedBox(height: 8),
-              TextField(
-                maxLines: 5,
-                decoration: InputDecoration(
-                  hintText: 'اكتب وصف مختصر عن المهارة...',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-
-
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: _pickFiles,
-                  icon: const Icon(Icons.attach_file,color: Colors.black,),
-                  label: const Text("إرفاق الملفات", style: TextStyle(color: Colors.black),),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                    Text(
+                      "إضافة مهارة",
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : primaryNavy,
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 48),
+                  ],
                 ),
-              ),
-
-
-              if (duplicateMessage != null) ...[
                 const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.info_outline,
-                          size: 20, color: Colors.orange),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          duplicateMessage!,
-                          style: const TextStyle(color: Colors.orange),
-                        ),
-                      ),
-                    ],
-                  ),
+                Text(
+                  "أخبرنا عن المهارة التي تود مشاركتها",
+                  style: TextStyle(color: isDark ? Colors.white70 : Colors.black54, fontSize: 14),
                 ),
-              ],
-
-
-              const SizedBox(height: 16),
-              if (selectedFiles.isNotEmpty)
-                Column(
-                  children: List.generate(selectedFiles.length, (index) {
-                    final file = selectedFiles[index];
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.insert_drive_file,
-                              color: Color(0xFF2E3E5C)),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              file.name,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () => _removeFile(index),
-                            icon: const Icon(Icons.close),
-                          )
-                        ],
-                      ),
-                    );
-                  }),
+                const SizedBox(height: 30),
+                _buildLabel("اسم المهارة", isDark),
+                const SizedBox(height: 8),
+                _buildTextField(
+                  controller: _titleController,
+                  hint: 'مثال: شرح لغة جافا ',
+                  isDark: isDark,
                 ),
-              const SizedBox(height: 30),
-
-
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () {
-                                        Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const SkillSuccessScreen()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2E3E5C),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                const SizedBox(height: 20),
+                _buildLabel("الوصف", isDark),
+                const SizedBox(height: 8),
+                _buildTextField(
+                  controller: _descriptionController,
+                  hint: ' صف ما يمكنك تقديمه',
+                  isDark: isDark,
+                  maxLines: 5,
+                ),
+                const SizedBox(height: 40),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _isUploading ? null : _submitSkill,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryNavy,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
-                  ),
-                  child: const Text(
-                    "إرسال",
-                    style: TextStyle(color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
+                    child: _isUploading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            "إرسال المهارة",
+                            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
                   ),
                 ),
-              ),
-
-
-              const SizedBox(height: 40),
-            ],
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-}
 
+  Widget _buildLabel(String text, bool isDark) {
+    return Text(text, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black));
+  }
 
-class SkillSuccessScreen extends StatelessWidget {
-  const SkillSuccessScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6F8FB),
-      body: Stack(
-        children: [
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(40),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 30,
-                  )
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(
-                    Icons.check_circle_rounded,
-                    size: 90,
-                    color: Color(0xFF2E3E5C),
-                  ),
-                  SizedBox(height: 24),
-                  Text(
-                    'تم الإرسال بنجاح',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2E3E5C),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: 50,
-            left: 20,
-            child: IconButton(
-              icon: const Icon(Icons.close, size: 28),
-              onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const CreateSkillScreen()),
-                  (route) => false,
-                );
-              },
-            ),
-          )
-        ],
+  Widget _buildTextField({required TextEditingController controller, required String hint, required bool isDark, int maxLines = 1}) {
+    return TextField(
+      controller: controller,
+      maxLines: maxLines,
+      style: TextStyle(color: isDark ? Colors.white : Colors.black),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey),
+        filled: true,
+        fillColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: isDark ? const BorderSide(color: Colors.white10) : BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Color(0xFF2E3E5C), width: 2),
+        ),
       ),
     );
   }
