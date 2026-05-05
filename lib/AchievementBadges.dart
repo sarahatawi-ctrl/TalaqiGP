@@ -1,98 +1,67 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:share_plus/share_plus.dart';
-import 'home.dart';
 
 class AchievementBadges extends StatelessWidget {
   const AchievementBadges({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F6F3),
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        title: const Text('أوسمتي', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF2E4365))),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF2E4365)),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            bool isLargeScreen = constraints.maxWidth > 600;
-            double horizontalPadding =
-                isLargeScreen ? constraints.maxWidth * 0.25 : 24.0;
-            double badgeSize = isLargeScreen ? 300 : 240;
+        child: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(currentUser?.uid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            double userHours = 0;
+            if (snapshot.hasData && snapshot.data!.exists) {
+              userHours = (snapshot.data!['teachingHours'] ?? 0).toDouble();
+            }
 
             return Stack(
               children: [
                 const ConfettiBackground(),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: IconButton(
-                          icon: const Icon(Icons.close,
-                              color: Colors.black87, size: 28),
-                          onPressed: () {
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const HomePage()),
-                              (route) => false,
-                            );
-                          },
+                    
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildBadgeItem(context, goal: 5, title: "متطوع ناشئ", current: userHours),
+                            const SizedBox(width: 20),
+                            _buildBadgeItem(context, goal: 10, title: "متطوع متميز", current: userHours),
+                            const SizedBox(width: 20),
+                            _buildBadgeItem(context, goal: 25, title: "سفير العطاء", current: userHours),
+                          ],
                         ),
                       ),
-                      const Spacer(flex: 1),
-                      const Text(
-                        'أحسنت!',
-                        style: TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFF212121),
-                        ),
-                        textAlign: TextAlign.center,
-                        textDirection: TextDirection.rtl,
+                      const SizedBox(height: 60),
+                      Text(
+                        'ساعاتك التعليمية الحالية: ${userHours.toStringAsFixed(1)} ساعة',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black54),
                       ),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'لقد حصلت على وسام',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF424242),
-                        ),
-                        textAlign: TextAlign.center,
-                        textDirection: TextDirection.rtl,
-                      ),
-                      const Spacer(flex: 2),
-                      BadgeWidget(size: badgeSize),
-                      const Spacer(flex: 3),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 60,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Share.share(
-                              '🎉 لقد حصلت على وسام جديد في التطبيق لإكمالي 5 ساعات من التطوع! #إنجاز',
-                              subject: 'إنجاز جديد!',
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF2D4369),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            elevation: 2,
-                          ),
-                          child: const Text(
-                            'شارك',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 40),
                     ],
                   ),
                 ),
@@ -103,163 +72,167 @@ class AchievementBadges extends StatelessWidget {
       ),
     );
   }
-}
 
-class BadgeWidget extends StatelessWidget {
-  final double size;
-  const BadgeWidget({super.key, required this.size});
+  Widget _buildBadgeItem(BuildContext context, {required int goal, required String title, required double current}) {
+    bool isUnlocked = current >= goal;
 
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: size,
-      height: size * 1.1,
-      child: Stack(
-        alignment: Alignment.center,
+    return GestureDetector(
+      onTap: () {
+        if (isUnlocked) {
+          _showCelebration(context, title, goal);
+        } else {
+          _showLockedInfo(context, goal, current);
+        }
+      },
+      child: Column(
         children: [
-          Positioned(
-            top: size * 0.05,
-            child: CustomPaint(
-              size: Size(size * 0.35, size * 0.35),
-              painter: ProfessionalRibbonPainter(
-                color: const Color(0xFFFF8C00),
-              ),
-            ),
-          ),
-          Positioned(
-            top: size * 0.18,
-            child: Container(
-              width: size * 0.7,
-              height: size * 0.7,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFFFFB347),
-                    Color(0xFFFF8C00),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                border: Border.all(
-                  color: Colors.white.withAlpha(80),
-                  width: 3,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(40),
-                    blurRadius: 30,
-                    offset: const Offset(0, 15),
-                  )
-                ],
-              ),
-              child: Center(
-                child: Container(
-                  width: size * 0.58,
-                  height: size * 0.58,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white.withAlpha(80),
-                      width: 2,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '25',
-                        style: TextStyle(
-                          fontSize: size * 0.22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          height: 1,
-                        ),
-                      ),
-                      Text(
-                        'ساعة',
-                        style: TextStyle(
-                          fontSize: size * 0.07,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                        textDirection: TextDirection.rtl,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+          // رسم الوسام
+          CustomBadgePainter(hours: goal, isUnlocked: isUnlocked),
+          const SizedBox(height: 10),
+          Text(
+            "ساعة $goal",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: isUnlocked ? Colors.orange.shade800 : Colors.grey,
             ),
           ),
         ],
       ),
     );
   }
+
+  void _showLockedInfo(BuildContext context, int goal, double current) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("باقي لك ${(goal - current).toStringAsFixed(1)} ساعة لفتح هذا الوسام! 🔒", textAlign: TextAlign.right),
+        backgroundColor: Colors.grey.shade700,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _showCelebration(BuildContext context, String title, int goal) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text("أحسنت✨ ", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            CustomBadgePainter(hours: goal, isUnlocked: true, size: 150),
+            const SizedBox(height: 20),
+            Text("حصلت على وسام $title", textAlign: TextAlign.center),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => Share.share('حققت وسام $goal ساعة في تطبيق تلاقِ! 🌟'),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.orange, shape: StadiumBorder()),
+              child: const Text("شارك", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class ProfessionalRibbonPainter extends CustomPainter {
+
+class CustomBadgePainter extends StatelessWidget {
+  final int hours;
+  final bool isUnlocked;
+  final double size;
+
+  const CustomBadgePainter({super.key, required this.hours, required this.isUnlocked, this.size = 100});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        CustomPaint(
+          size: Size(size, size),
+          painter: BadgeShapePainter(
+            color: isUnlocked ? Colors.orange : Colors.grey.shade300,
+          ),
+        ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '$hours',
+              style: TextStyle(
+                color: isUnlocked ? Colors.white : Colors.grey.shade500,
+                fontSize: size * 0.35,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              'ساعات',
+              style: TextStyle(
+                color: isUnlocked ? Colors.white : Colors.grey.shade500,
+                fontSize: size * 0.12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        if (!isUnlocked)
+          Icon(Icons.lock_outline, color: Colors.grey.shade600, size: size * 0.3),
+      ],
+    );
+  }
+}
+
+
+class BadgeShapePainter extends CustomPainter {
   final Color color;
-  ProfessionalRibbonPainter({required this.color});
+  BadgeShapePainter({required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = color;
-    final shadowPaint = Paint()..color = Colors.black.withOpacity(0.25);
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
 
     final path = Path();
-    double w = size.width;
-    double h = size.height;
+    int points = 16; 
+    double innerRadius = size.width / 2.3;
+    double outerRadius = size.width / 2;
+    double centerX = size.width / 2;
+    double centerY = size.height / 2;
 
-    path.moveTo(w * 0.1, 0);
-    path.lineTo(w * 0.5, h * 0.3);
-    path.lineTo(w * 0.5, h);
-    path.lineTo(0, h * 0.7);
+    for (int i = 0; i < points * 2; i++) {
+      double radius = i.isEven ? outerRadius : innerRadius;
+      double angle = i * math.pi / points;
+      double x = centerX + radius * math.cos(angle);
+      double y = centerY + radius * math.sin(angle);
+      if (i == 0) path.moveTo(x, y);
+      else path.lineTo(x, y);
+    }
     path.close();
-
-    path.moveTo(w * 0.9, 0);
-    path.lineTo(w * 0.5, h * 0.3);
-    path.lineTo(w * 0.5, h);
-    path.lineTo(w, h * 0.7);
-    path.close();
-
-    canvas.drawPath(path.shift(const Offset(0, 3)), shadowPaint);
     canvas.drawPath(path, paint);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
 class ConfettiBackground extends StatelessWidget {
   const ConfettiBackground({super.key});
-
   @override
   Widget build(BuildContext context) {
     final random = math.Random();
     return Stack(
-      children: List.generate(40, (index) {
-        final color = [
-          const Color(0xFFFFD700),
-          const Color(0xFFFF4500),
-          const Color(0xFF1E90FF),
-          const Color(0xFF32CD32),
-          const Color(0xFF9370DB),
-        ][random.nextInt(5)];
-
+      children: List.generate(20, (index) {
         return Positioned(
           left: random.nextDouble() * MediaQuery.of(context).size.width,
           top: random.nextDouble() * MediaQuery.of(context).size.height,
-          child: Transform.rotate(
-            angle: random.nextDouble() * 2 * math.pi,
-            child: Container(
-              width: random.nextDouble() * 8 + 4,
-              height: random.nextDouble() * 8 + 4,
-              decoration: BoxDecoration(
-                color: color.withAlpha(153),
-                shape: random.nextBool()
-                    ? BoxShape.circle
-                    : BoxShape.rectangle,
-              ),
+          child: Container(
+            width: 5, height: 5,
+            decoration: BoxDecoration(
+              color: Colors.orange.withOpacity(0.3),
+              shape: BoxShape.circle,
             ),
           ),
         );
